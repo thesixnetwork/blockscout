@@ -8,7 +8,7 @@ defmodule BlockScoutWeb.WeiHelper do
   alias BlockScoutWeb.CldrHelper
   alias Explorer.Chain.Wei
 
-  @valid_units ~w(wei gwei ether)a
+  @valid_units ~w(wei nanoSIX ether)a
 
   @type format_option :: {:include_unit_label, boolean()}
 
@@ -31,8 +31,8 @@ defmodule BlockScoutWeb.WeiHelper do
       iex> format_wei_value(%Wei{value: Decimal.new(1)}, :wei)
       "1 Wei"
 
-      iex> format_wei_value(%Wei{value: Decimal.new(1, 10, 12)}, :gwei)
-      "10,000 Gwei"
+      iex> format_wei_value(%Wei{value: Decimal.new(1, 10, 12)}, :nanoSIX)
+      "10,000 nanoSIX"
 
       iex> format_wei_value(%Wei{value: Decimal.new(1, 10, 21)}, :ether)
       "10,000 ETH"
@@ -74,6 +74,6 @@ defmodule BlockScoutWeb.WeiHelper do
   end
 
   defp display_unit(:wei), do: gettext("Wei")
-  defp display_unit(:gwei), do: gettext("Gwei")
+  defp display_unit(:nanoSIX), do: gettext("nanoSIX")
   defp display_unit(:ether), do: Explorer.coin_name()
 end

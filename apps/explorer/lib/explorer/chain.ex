@@ -804,7 +804,7 @@ defmodule Explorer.Chain do
   The `t:Explorer.Chain.Address.t/0` `balance` in `unit`.
   """
   @spec balance(Address.t(), :wei) :: Wei.wei() | nil
-  @spec balance(Address.t(), :gwei) :: Wei.gwei() | nil
+  @spec balance(Address.t(), :nanoSIX) :: Wei.nanoSIX() | nil
   @spec balance(Address.t(), :ether) :: Wei.ether() | nil
   def balance(%Address{fetched_coin_balance: balance}, unit) do
     case balance do
@@ -1306,7 +1306,7 @@ defmodule Explorer.Chain do
       {:actual, Decimal.new(4)}
 
   """
-  @spec fee(Transaction.t(), :ether | :gwei | :wei) :: {:maximum, Decimal.t()} | {:actual, Decimal.t()}
+  @spec fee(Transaction.t(), :ether | :nanoSIX | :wei) :: {:maximum, Decimal.t()} | {:actual, Decimal.t()}
   def fee(%Transaction{gas: gas, gas_price: gas_price, gas_used: nil}, unit) do
     fee =
       gas_price
@@ -4002,10 +4002,10 @@ defmodule Explorer.Chain do
   `unit`.
   """
   @spec value(InternalTransaction.t(), :wei) :: Wei.wei()
-  @spec value(InternalTransaction.t(), :gwei) :: Wei.gwei()
+  @spec value(InternalTransaction.t(), :nanoSIX) :: Wei.nanoSIX()
   @spec value(InternalTransaction.t(), :ether) :: Wei.ether()
   @spec value(Transaction.t(), :wei) :: Wei.wei()
-  @spec value(Transaction.t(), :gwei) :: Wei.gwei()
+  @spec value(Transaction.t(), :nanoSIX) :: Wei.nanoSIX()
   @spec value(Transaction.t(), :ether) :: Wei.ether()
   def value(%type{value: value}, unit) when type in [InternalTransaction, Transaction] do
     Wei.to(value, unit)

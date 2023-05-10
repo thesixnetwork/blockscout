@@ -6,13 +6,13 @@ defmodule BlockScoutWeb.AddressCoinBalanceViewTest do
 
   describe "format/1" do
     test "format the wei value in ether" do
-      wei = Wei.from(Decimal.new(1_340_000_000), :gwei)
+      wei = Wei.from(Decimal.new(1_340_000_000), :nanoSIX)
 
       assert AddressCoinBalanceView.format(wei) == "1.34 ETH"
     end
 
     test "format negative values" do
-      wei = Wei.from(Decimal.new(-1_340_000_000), :gwei)
+      wei = Wei.from(Decimal.new(-1_340_000_000), :nanoSIX)
 
       assert AddressCoinBalanceView.format(wei) == "-1.34 ETH"
     end

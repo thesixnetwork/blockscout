@@ -95,14 +95,14 @@ defmodule Explorer.Chain.Wei do
   @typedoc """
   Short for giga-wei
 
-  10<sup>9</sup> wei is 1 gwei.
+  10<sup>9</sup> wei is 1 nanoSIX.
   """
-  @type gwei :: Decimal.t()
+  @type nanoSIX :: Decimal.t()
 
   @typedoc """
   The unit to convert `t:wei/0` to.
   """
-  @type unit :: :wei | :gwei | :ether
+  @type unit :: :wei | :nanoSIX | :ether
 
   @typedoc """
   The smallest fractional unit of Ether.
@@ -115,7 +115,7 @@ defmodule Explorer.Chain.Wei do
         }
 
   @wei_per_ether Decimal.new(1_000_000_000_000_000_000)
-  @wei_per_gwei Decimal.new(1_000_000_000)
+  @wei_per_nanoSIX Decimal.new(1_000_000_000)
 
   @spec hex_format(Wei.t()) :: String.t()
   def hex_format(%Wei{value: decimal}) do
@@ -184,7 +184,7 @@ defmodule Explorer.Chain.Wei do
   end
 
   @doc """
-  Converts `Decimal` representations of various wei denominations (wei, Gwei, ether) to
+  Converts `Decimal` representations of various wei denominations (wei, nanoSIX, ether) to
   a wei base unit.
 
   ## Examples
@@ -194,9 +194,9 @@ defmodule Explorer.Chain.Wei do
       iex> Explorer.Chain.Wei.from(Decimal.new(1), :wei)
       %Explorer.Chain.Wei{value: Decimal.new(1)}
 
-  Convert `t:gwei/0` to wei.
+  Convert `t:nanoSIX/0` to wei.
 
-      iex> Explorer.Chain.Wei.from(Decimal.new(1), :gwei)
+      iex> Explorer.Chain.Wei.from(Decimal.new(1), :nanoSIX)
       %Explorer.Chain.Wei{value: Decimal.new(1_000_000_000)}
 
   Convert `t:ether/0` to wei.
@@ -211,9 +211,9 @@ defmodule Explorer.Chain.Wei do
     %__MODULE__{value: Decimal.mult(ether, @wei_per_ether)}
   end
 
-  @spec from(gwei(), :gwei) :: t()
-  def from(%Decimal{} = gwei, :gwei) do
-    %__MODULE__{value: Decimal.mult(gwei, @wei_per_gwei)}
+  @spec from(nanoSIX(), :nanoSIX) :: t()
+  def from(%Decimal{} = nanoSIX, :nanoSIX) do
+    %__MODULE__{value: Decimal.mult(nanoSIX, @wei_per_nanoSIX)}
   end
 
   @spec from(wei(), :wei) :: t()
@@ -231,11 +231,11 @@ defmodule Explorer.Chain.Wei do
       iex> Explorer.Chain.Wei.to(%Explorer.Chain.Wei{value: Decimal.new(1)}, :wei)
       Decimal.new(1)
 
-  Convert wei to `t:gwei/0`.
+  Convert wei to `t:nanoSIX/0`.
 
-      iex> Explorer.Chain.Wei.to(%Explorer.Chain.Wei{value: Decimal.new(1)}, :gwei)
+      iex> Explorer.Chain.Wei.to(%Explorer.Chain.Wei{value: Decimal.new(1)}, :nanoSIX)
       Decimal.new("1e-9")
-      iex> Explorer.Chain.Wei.to(%Explorer.Chain.Wei{value: Decimal.new("1e9")}, :gwei)
+      iex> Explorer.Chain.Wei.to(%Explorer.Chain.Wei{value: Decimal.new("1e9")}, :nanoSIX)
       Decimal.new(1)
 
   Convert wei to `t:ether/0`.
@@ -252,9 +252,9 @@ defmodule Explorer.Chain.Wei do
     Decimal.div(wei, @wei_per_ether)
   end
 
-  @spec to(t(), :gwei) :: gwei()
-  def to(%__MODULE__{value: wei}, :gwei) do
-    Decimal.div(wei, @wei_per_gwei)
+  @spec to(t(), :nanoSIX) :: nanoSIX()
+  def to(%__MODULE__{value: wei}, :nanoSIX) do
+    Decimal.div(wei, @wei_per_nanoSIX)
   end
 
   @spec to(t(), :wei) :: wei()
