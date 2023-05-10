@@ -47,9 +47,9 @@ defmodule Explorer.Chain.Cache.GasPriceOracle do
       latest_gas_prices
       |> Enum.map(fn %Wei{value: gas_price} -> Decimal.to_integer(gas_price) end)
 
-    safelow_gas_price = gas_price_percentile_to_gwei(latest_ordered_gas_prices, safelow_percentile)
-    average_gas_price = gas_price_percentile_to_gwei(latest_ordered_gas_prices, average_percentile)
-    fast_gas_price = gas_price_percentile_to_gwei(latest_ordered_gas_prices, fast_percentile)
+    safelow_gas_price = gas_price_percentile_to_nanoSIX(latest_ordered_gas_prices, safelow_percentile)
+    average_gas_price = gas_price_percentile_to_nanoSIX(latest_ordered_gas_prices, average_percentile)
+    fast_gas_price = gas_price_percentile_to_nanoSIX(latest_ordered_gas_prices, fast_percentile)
 
     gas_prices = %{
       "slow" => safelow_gas_price,
@@ -102,19 +102,19 @@ defmodule Explorer.Chain.Cache.GasPriceOracle do
     {:update, task}
   end
 
-  defp gas_price_percentile_to_gwei(gas_prices, percentile) do
+  defp gas_price_percentile_to_nanoSIX(gas_prices, percentile) do
     gas_price_wei = percentile(gas_prices, percentile)
 
     if gas_price_wei do
-      gas_price_gwei = Wei.to(%Wei{value: Decimal.from_float(gas_price_wei)}, :gwei)
+      gas_price_nanoSIX = Wei.to(%Wei{value: Decimal.from_float(gas_price_wei)}, :nanoSIX)
 
-      gas_price_gwei_float = gas_price_gwei |> Decimal.to_float()
+      gas_price_nanoSIX_float = gas_price_nanoSIX |> Decimal.to_float()
 
-      if gas_price_gwei_float > 0.01 do
-        gas_price_gwei_float
+      if gas_price_nanoSIX_float > 0.01 do
+        gas_price_nanoSIX_float
         |> Float.ceil(2)
       else
-        gas_price_gwei_float
+        gas_price_nanoSIX_float
       end
     else
       nil

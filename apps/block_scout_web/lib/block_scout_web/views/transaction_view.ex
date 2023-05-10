@@ -399,7 +399,7 @@ defmodule BlockScoutWeb.TransactionView do
   @doc """
   Converts a transaction's gas price to a displayable value.
   """
-  def gas_price(%Transaction{gas_price: gas_price}, unit) when unit in ~w(wei gwei ether)a do
+  def gas_price(%Transaction{gas_price: gas_price}, unit) when unit in ~w(wei nanoSIX ether)a do
     format_wei_value(gas_price, unit)
   end
 

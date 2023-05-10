@@ -14,7 +14,7 @@ defmodule BlockScoutWeb.BlockViewTest do
         |> with_block(block)
       end)
 
-      assert "55 Gwei" == BlockView.average_gas_price(Repo.preload(block, [:transactions]))
+      assert "55 nanoSIX" == BlockView.average_gas_price(Repo.preload(block, [:transactions]))
     end
   end
 

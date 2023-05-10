@@ -205,7 +205,7 @@ defmodule Explorer.Account.Notifier.Summary do
   def type(%Chain.InternalTransaction{}), do: :coin
 
   def fee(%Chain.Transaction{} = transaction) do
-    {_, fee} = Chain.fee(transaction, :gwei)
+    {_, fee} = Chain.fee(transaction, :nanoSIX)
     fee
   end
 

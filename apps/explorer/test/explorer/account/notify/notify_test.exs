@@ -68,7 +68,7 @@ defmodule Explorer.Account.Notify.NotifyTest do
           hash: _tx_hash
         } = with_block(insert(:transaction, to_address: %Chain.Address{hash: address_hash}))
 
-      {_, fee} = Chain.fee(tx, :gwei)
+      {_, fee} = Chain.fee(tx, :nanoSIX)
       amount = Wei.to(tx.value, :ether)
       notify = Notify.call([tx])
 

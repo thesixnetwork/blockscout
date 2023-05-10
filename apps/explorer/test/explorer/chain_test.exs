@@ -894,10 +894,10 @@ defmodule Explorer.ChainTest do
       assert Chain.balance(%Address{fetched_coin_balance: nil}, :wei) == nil
     end
 
-    test "with Address.t with :gwei" do
-      assert Chain.balance(%Address{fetched_coin_balance: %Wei{value: Decimal.new(1)}}, :gwei) == Decimal.new("1e-9")
-      assert Chain.balance(%Address{fetched_coin_balance: %Wei{value: Decimal.new("1e9")}}, :gwei) == Decimal.new(1)
-      assert Chain.balance(%Address{fetched_coin_balance: nil}, :gwei) == nil
+    test "with Address.t with :nanoSIX" do
+      assert Chain.balance(%Address{fetched_coin_balance: %Wei{value: Decimal.new(1)}}, :nanoSIX) == Decimal.new("1e-9")
+      assert Chain.balance(%Address{fetched_coin_balance: %Wei{value: Decimal.new("1e9")}}, :nanoSIX) == Decimal.new(1)
+      assert Chain.balance(%Address{fetched_coin_balance: nil}, :nanoSIX) == nil
     end
 
     test "with Address.t with :ether" do
@@ -1133,8 +1133,8 @@ defmodule Explorer.ChainTest do
                {:maximum, Decimal.new(6)}
     end
 
-    test "without receipt with :gwei unit" do
-      assert Chain.fee(%Transaction{gas: Decimal.new(3), gas_price: %Wei{value: Decimal.new(2)}, gas_used: nil}, :gwei) ==
+    test "without receipt with :nanoSIX unit" do
+      assert Chain.fee(%Transaction{gas: Decimal.new(3), gas_price: %Wei{value: Decimal.new(2)}, gas_used: nil}, :nanoSIX) ==
                {:maximum, Decimal.new("6e-9")}
     end
 
@@ -1154,14 +1154,14 @@ defmodule Explorer.ChainTest do
              ) == {:actual, Decimal.new(4)}
     end
 
-    test "with receipt with :gwei unit" do
+    test "with receipt with :nanoSIX unit" do
       assert Chain.fee(
                %Transaction{
                  gas: Decimal.new(3),
                  gas_price: %Wei{value: Decimal.new(2)},
                  gas_used: Decimal.new(2)
                },
-               :gwei
+               :nanoSIX
              ) == {:actual, Decimal.new("4e-9")}
     end
 
@@ -1239,10 +1239,10 @@ defmodule Explorer.ChainTest do
       assert Chain.gas_price(%Transaction{gas_price: %Wei{value: Decimal.new(1)}}, :wei) == Decimal.new(1)
     end
 
-    test ":gwei unit" do
-      assert Chain.gas_price(%Transaction{gas_price: %Wei{value: Decimal.new(1)}}, :gwei) == Decimal.new("1e-9")
+    test ":nanoSIX unit" do
+      assert Chain.gas_price(%Transaction{gas_price: %Wei{value: Decimal.new(1)}}, :nanoSIX) == Decimal.new("1e-9")
 
-      assert Chain.gas_price(%Transaction{gas_price: %Wei{value: Decimal.new("1e9")}}, :gwei) == Decimal.new(1)
+      assert Chain.gas_price(%Transaction{gas_price: %Wei{value: Decimal.new("1e9")}}, :nanoSIX) == Decimal.new(1)
     end
 
     test ":ether unit" do
@@ -3571,10 +3571,10 @@ defmodule Explorer.ChainTest do
       assert Chain.value(%InternalTransaction{value: %Wei{value: Decimal.new(1)}}, :wei) == Decimal.new(1)
     end
 
-    test "with InternalTransaction.t with :gwei" do
-      assert Chain.value(%InternalTransaction{value: %Wei{value: Decimal.new(1)}}, :gwei) == Decimal.new("1e-9")
+    test "with InternalTransaction.t with :nanoSIX" do
+      assert Chain.value(%InternalTransaction{value: %Wei{value: Decimal.new(1)}}, :nanoSIX) == Decimal.new("1e-9")
 
-      assert Chain.value(%InternalTransaction{value: %Wei{value: Decimal.new("1e9")}}, :gwei) == Decimal.new(1)
+      assert Chain.value(%InternalTransaction{value: %Wei{value: Decimal.new("1e9")}}, :nanoSIX) == Decimal.new(1)
     end
 
     test "with InternalTransaction.t with :ether" do
@@ -3587,9 +3587,9 @@ defmodule Explorer.ChainTest do
       assert Chain.value(%Transaction{value: %Wei{value: Decimal.new(1)}}, :wei) == Decimal.new(1)
     end
 
-    test "with Transaction.t with :gwei" do
-      assert Chain.value(%Transaction{value: %Wei{value: Decimal.new(1)}}, :gwei) == Decimal.new("1e-9")
-      assert Chain.value(%Transaction{value: %Wei{value: Decimal.new("1e9")}}, :gwei) == Decimal.new(1)
+    test "with Transaction.t with :nanoSIX" do
+      assert Chain.value(%Transaction{value: %Wei{value: Decimal.new(1)}}, :nanoSIX) == Decimal.new("1e-9")
+      assert Chain.value(%Transaction{value: %Wei{value: Decimal.new("1e9")}}, :nanoSIX) == Decimal.new(1)
     end
 
     test "with Transaction.t with :ether" do
