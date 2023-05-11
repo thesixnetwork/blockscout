@@ -21,6 +21,15 @@ config :block_scout_web, BlockScoutWeb.Endpoint,
     ]
   ]
 
+  config :block_scout_web, BlockScoutWeb.Endpoint,
+  http: [port: 4000],
+  https: [
+    port: 4001,
+    cipher_suite: :strong,
+    certfile: "priv/cert/selfsigned.pem",
+    keyfile: "priv/cert/selfsigned_key.pem"
+  ]
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed
