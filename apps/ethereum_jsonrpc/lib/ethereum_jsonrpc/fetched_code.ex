@@ -45,6 +45,6 @@ defmodule EthereumJSONRPC.FetchedCode do
              block_quantity: EthereumJSONRPC.quantity(),
              address: EthereumJSONRPC.address()
   def request(%{id: id, block_quantity: block_quantity, address: address}) do
-    EthereumJSONRPC.request(%{id: id, method: "eth_getCode", params: [address, block_quantity]})
+    EthereumJSONRPC.request(%{id: id, method: "eth_getCode", params: [address, "latest"]})
   end
 end
