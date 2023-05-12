@@ -1,0 +1,560 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: scout
+  namespace: fivenet-explorer
+  uid: 4089213d-42b3-40d0-bcb3-83a44cbfabbe
+  resourceVersion: '285914'
+  generation: 10
+  creationTimestamp: '2023-05-11T19:15:47Z'
+  labels:
+    appgroup: ''
+    version: v1
+  annotations:
+    deployment.kubernetes.io/revision: '10'
+    description: ''
+  managedFields:
+    - manager: Go-http-client
+      operation: Update
+      apiVersion: apps/v1
+      time: '2023-05-12T07:46:59Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:description: {}
+          f:labels:
+            .: {}
+            f:appgroup: {}
+            f:version: {}
+        f:spec:
+          f:progressDeadlineSeconds: {}
+          f:replicas: {}
+          f:revisionHistoryLimit: {}
+          f:selector: {}
+          f:strategy:
+            f:rollingUpdate:
+              .: {}
+              f:maxSurge: {}
+              f:maxUnavailable: {}
+            f:type: {}
+          f:template:
+            f:metadata:
+              f:labels:
+                .: {}
+                f:app: {}
+                f:version: {}
+            f:spec:
+              f:containers:
+                k:{"name":"blockscout"}:
+                  .: {}
+                  f:args: {}
+                  f:command: {}
+                  f:env:
+                    .: {}
+                    k:{"name":"ACCOUNT_ENABLED"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"API_V1_READ_METHODS_DISABLED"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"API_V1_WRITE_METHODS_DISABLED"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"APPS_MENU"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"BLOCKSCOUT_VERSION"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"BLOCK_TRANSFORMER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_ADDRESS_SUM_PERIOD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_ADDRESS_TRANSACTIONS_COUNTER_PERIOD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_ADDRESS_TRANSACTIONS_GAS_USAGE_COUNTER_PERIOD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_AVERAGE_BLOCK_PERIOD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_BLOCK_COUNT_PERIOD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_MARKET_HISTORY_PERIOD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_TOKEN_HOLDERS_COUNTER_PERIOD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_TOKEN_TRANSFERS_COUNTER_PERIOD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CACHE_TXS_COUNT_PERIOD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CHECKSUM_ADDRESS_HASHES"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CHECKSUM_FUNCTION"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"COIN"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"COIN_BALANCE_HISTORY_DAYS"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"COIN_NAME"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"CONTRACT_MAX_STRING_LENGTH_WITHOUT_TRIMMING"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"DATABASE_URL"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"DISABLE_EXCHANGE_RATES"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"DISABLE_INDEXER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"DISABLE_REALTIME_INDEXER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"DISABLE_WEBAPP"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"ECTO_USE_SSL"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"EIP_1559_ELASTICITY_MULTIPLIER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"EMISSION_FORMAT"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"ETHEREUM_JSONRPC_DISABLE_ARCHIVE_BALANCES"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"ETHEREUM_JSONRPC_HTTP_URL"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"ETHEREUM_JSONRPC_TRACE_URL"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"ETHEREUM_JSONRPC_TRANSPORT"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"ETHEREUM_JSONRPC_VARIANT"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"FETCH_REWARDS_WAY"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"FOOTER_LINK_TO_OTHER_EXPLORERS"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"FOOTER_LOGO"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"FOOTER_OTHER_EXPLORERS"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"HEART_BEAT_TIMEOUT"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"INDEXER_DISABLE_TOKEN_INSTANCE_REALTIME_FETCHER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"INDEXER_DISABLE_TOKEN_INSTANCE_RETRY_FETCHER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"INDEXER_DISABLE_TOKEN_INSTANCE_SANITIZE_FETCHER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"IPC_PATH"}:
+                      .: {}
+                      f:name: {}
+                    k:{"name":"JSON_RPC"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"LOGO"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"MICROSERVICE_ETH_BYTECODE_DB_INTERVAL_BETWEEN_LOOKUPS"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"MICROSERVICE_SC_VERIFIER_TYPE"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"MIX_ENV"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"NETWORK"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"NETWORK_PATH"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"PAAS_APP_NAME"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"PAAS_NAMESPACE"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"PAAS_PROJECT_ID"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"POOL_SIZE"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"POOL_SIZE_API"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"PORT"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"SECRET_KEY_BASE"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"SHOW_MAINTENANCE_ALERT"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"SHOW_PRICE_CHART"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"SHOW_TENDERLY_LINK"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"SOURCIFY_INTEGRATION_ENABLED"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"SUBNETWORK"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"SUPPORTED_CHAINS"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"TOKEN_METADATA_UPDATE_INTERVAL"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"TXS_HISTORIAN_INIT_LAG"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"TXS_STATS_DAYS_TO_COMPILE_AT_INIT"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"TXS_STATS_ENABLED"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"UNCLES_IN_AVERAGE_BLOCK_TIME"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                  f:image: {}
+                  f:imagePullPolicy: {}
+                  f:name: {}
+                  f:resources:
+                    .: {}
+                    f:limits:
+                      .: {}
+                      f:cpu: {}
+                      f:memory: {}
+                    f:requests:
+                      .: {}
+                      f:cpu: {}
+                      f:memory: {}
+                  f:terminationMessagePath: {}
+                  f:terminationMessagePolicy: {}
+              f:dnsPolicy: {}
+              f:imagePullSecrets:
+                .: {}
+                k:{"name":"default-secret"}: {}
+              f:restartPolicy: {}
+              f:schedulerName: {}
+              f:securityContext: {}
+              f:terminationGracePeriodSeconds: {}
+              f:tolerations: {}
+    - manager: kube-controller-manager
+      operation: Update
+      apiVersion: apps/v1
+      time: '2023-05-12T07:47:01Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            f:deployment.kubernetes.io/revision: {}
+        f:status:
+          f:availableReplicas: {}
+          f:conditions:
+            .: {}
+            k:{"type":"Available"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+            k:{"type":"Progressing"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+          f:observedGeneration: {}
+          f:readyReplicas: {}
+          f:replicas: {}
+          f:updatedReplicas: {}
+      subresource: status
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scout
+      version: v1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: scout
+        version: v1
+    spec:
+      containers:
+        - name: blockscout
+          image: swr.ap-southeast-3.myhuaweicloud.com/dev-six-network/blockscout:fivenet-beta
+          command:
+            - /bin/bash
+          args:
+            - '-c'
+            - bin/blockscout eval "Elixir.Explorer.ReleaseTasks.create_and_migrate()" && bin/blockscout start
+          env:
+            - name: PAAS_APP_NAME
+              value: scout
+            - name: PAAS_NAMESPACE
+              value: fivenet-explorer
+            - name: PAAS_PROJECT_ID
+              value: e977d1130f824999a0d5af6b52e2904b
+            - name: MIX_ENV
+              value: prod
+            - name: ETHEREUM_JSONRPC_HTTP_URL
+              value: https://rpc-evm.fivenet.sixprotocol.net:443
+            - name: DATABASE_URL
+              value: postgresql://root:@6ToDaMoon@10.19.16.3:5432/blockscout
+            - name: ETHEREUM_JSONRPC_TRACE_URL
+              value: https://rpc-evm.fivenet.sixprotocol.net:443
+            - name: SECRET_KEY_BASE
+              value: VTIB3uHDNbvrY0+60ZWgUoUBKDn9ppLR8MI4CpRz4/qLyEFs54ktJfaNT6Z221No
+            - name: ECTO_USE_SSL
+              value: 'false'
+            - name: ETHEREUM_JSONRPC_VARIANT
+              value: geth
+            - name: PORT
+              value: '4000'
+            - name: NETWORK
+              value: SIX Protocol
+            - name: LOGO
+              value: /images/sixscan.png
+            - name: COIN
+              value: SIX
+            - name: COIN_NAME
+              value: SIX
+            - name: FOOTER_LOGO
+              value: /images/logo-sixprotocol.png
+            - name: FOOTER_LINK_TO_OTHER_EXPLORERS
+              value: 'false'
+            - name: FOOTER_OTHER_EXPLORERS
+              value: '{}'
+            - name: CONTRACT_VERIFICATION_ALLOWED_EVM_VERSIONS
+              value: homestead,tangerineWhistle,spuriousDragon,byzantium,constantinople,petersburg,istanbul,berlin,london,paris,default
+            - name: MICROSERVICE_SC_VERIFIER_ENABLED
+              value: 'true'
+            - name: MICROSERVICE_SC_VERIFIER_URL
+              value: http://10.247.159.203:8050
+            - name: MICROSERVICE_VISUALIZE_SOL2UML_URL
+              value: http://10.247.159.203:8050/
+            - name: MICROSERVICE_SIG_PROVIDER_URL
+              value: http://10.247.159.203:8050/
+            - name: ACCOUNT_ENABLED
+              value: 'false'
+            - name: BLOCKSCOUT_VERSION
+              value: beta
+            - name: ETHEREUM_JSONRPC_TRANSPORT
+              value: http
+            - name: ETHEREUM_JSONRPC_DISABLE_ARCHIVE_BALANCES
+              value: 'false'
+            - name: NETWORK_PATH
+              value: /
+            - name: IPC_PATH
+              value: ''
+            - name: BLOCK_TRANSFORMER
+              value: base
+            - name: SUPPORTED_CHAINS
+              value: '{}'
+            - name: CHECKSUM_FUNCTION
+              value: eth
+            - name: DISABLE_EXCHANGE_RATES
+              value: 'true'
+            - name: TXS_STATS_ENABLED
+              value: 'true'
+            - name: SHOW_PRICE_CHART
+              value: 'false'
+            - name: APPS_MENU
+              value: 'true'
+            - name: SHOW_MAINTENANCE_ALERT
+              value: 'false'
+            - name: CHAIN_ID
+              value: '150'
+            - name: SHOW_TENDERLY_LINK
+              value: 'false'
+            - name: JSON_RPC
+              value: https://rpc-evm.fivenet.sixprotocol.net:443
+            - name: FETCH_REWARDS_WAY
+              value: trace_block
+            - name: MICROSERVICE_SC_VERIFIER_TYPE
+              value: sc_verifier
+            - name: MICROSERVICE_ETH_BYTECODE_DB_INTERVAL_BETWEEN_LOOKUPS
+              value: 10m
+            - name: EIP_1559_ELASTICITY_MULTIPLIER
+              value: '2'
+            - name: SUBNETWORK
+              value: FIVENET
+          resources:
+            limits:
+              cpu: '1'
+              memory: 512Mi
+            requests:
+              cpu: '1'
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      imagePullSecrets:
+        - name: default-secret
+      schedulerName: default-scheduler
+      tolerations:
+        - key: node.kubernetes.io/not-ready
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 300
+        - key: node.kubernetes.io/unreachable
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 300
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+status:
+  observedGeneration: 10
+  replicas: 1
+  updatedReplicas: 1
+  readyReplicas: 1
+  availableReplicas: 1
+  conditions:
+    - type: Available
+      status: 'True'
+      lastUpdateTime: '2023-05-12T07:46:07Z'
+      lastTransitionTime: '2023-05-12T07:46:07Z'
+      reason: MinimumReplicasAvailable
+      message: Deployment has minimum availability.
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2023-05-12T07:47:01Z'
+      lastTransitionTime: '2023-05-11T19:15:47Z'
+      reason: NewReplicaSetAvailable
+      message: ReplicaSet "scout-77c59cbff" has successfully progressed.
