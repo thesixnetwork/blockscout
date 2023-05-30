@@ -55,8 +55,8 @@
     </script>
   </head>
 
-  <body>
-    <div class="layout-container six-scan">
+  <body class="six-scan">
+    <div class="layout-container">
       <!-- Block for passing backend runtime env variables to frontend -->
       <div id="permanent-dark-mode" class="d-none" ><%= Application.get_env(:block_scout_web, :permanent_dark_mode_enabled) %></div>
       <div id="permanent-light-mode" class="d-none" ><%= Application.get_env(:block_scout_web, :permanent_light_mode_enabled) %></div>
