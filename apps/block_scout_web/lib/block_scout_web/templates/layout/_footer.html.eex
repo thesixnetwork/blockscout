@@ -1,6 +1,67 @@
 <footer class="footer">
   <div class="footer-body container">
+    <div class="d-flex socials">
+      <a
+        href="https://twitter.com/theSIXnetwork"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="/images/socials/twitter.png" alt="" />
+      </a>
+      <a
+        href="https://web.facebook.com/thesixnetwork"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="/images/socials/facebook.png" alt="" />
+      </a>
+      <a
+        href="https://discord.gg/5gJQCXzcWf"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="/images/socials/discord.png" alt="" />
+      </a>
+      <a
+        href="https://t.me/SIXnetwork"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="/images/socials/telegram.png" alt="" />
+      </a>
+      <a
+        href="https://sixnetwork.medium.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="/images/socials/medium.png" alt="" />
+      </a>
+      <a
+        href="https://open.kakao.com/o/gQNRT5K"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="/images/socials/talk.png" alt="" />
+      </a>
+    </div>
+    <div class="divider"></div>
+    <div class="d-flex policy">
+      <div class="d-flex">
+        <a
+          href="https://six.network/privacy-policy"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Privacy Policy</a
+        >
+        <p>| © 2023 SIX Network PTE. LTD.</p>
+      </div>
+      <img src="/images/power_by_six.png" alt="" />
+    </div>
+
+
+
     <!-- Logo -->
+    <!--
     <div class="row footer-logo-row">
       <div class="col-md-12">
         <%= link to: webapp_url(@conn), class: "footer-brand" do %>
@@ -93,5 +154,6 @@
         <%= gettext("Version") %>: <%= release_link %>
       </div>
     <% end %>
+    -->
   </div>
 </footer>

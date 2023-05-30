@@ -1,0 +1,232 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+.six-scan {
+  font-family: "Inter", sans-serif;
+  color: #4c4e6b;
+
+  main {
+    background: #fff;
+  }
+
+  a {
+    color: #6856b9;
+  }
+
+  .navbar-logo {
+    max-height: 30px;
+  }
+
+  .tile .tile-body a,
+  .tile a[data-test="token_link"],
+  .tile span[data-address-hash] {
+    color: #6856b9;
+  }
+
+  .dashboard-banner-container {
+    background: linear-gradient(
+      271.05deg,
+      #33337e 0%,
+      #464b92 43.59%,
+      #7c5cce 100%
+    ) !important;
+    position: relative;
+    height: initial;
+    box-shadow: none;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      /* background-image: url("../static/images/banner.png"); */
+      background-image: url("images/banner.png");
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      opacity: 0.5;
+    }
+  }
+
+  .dashboard-banner {
+    height: initial;
+    align-items: stretch;
+    padding: 24px 0;
+  }
+
+  .dashboard-banner-network-plain-container {
+    background: transparent !important;
+    margin: 0;
+    align-self: initial;
+    height: initial;
+    -webkit-box-align: initial;
+    -ms-flex-align: initial;
+    -ms-flex-item-align: initial;
+    -ms-flex-pack: initial;
+
+    &:after {
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 60%
+      ) !important;
+      border-bottom-left-radius: 10px;
+      box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.15);
+      height: 100%;
+    }
+  }
+
+  .dashboard-banner-network-graph {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .dashboard-banner-chart {
+      margin: 0;
+    }
+
+    .dashboard-banner-chart-legend {
+      padding: 16px 0 0 0;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+
+      @media (max-width: 767.98px) {
+        padding: 16px 0;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  }
+
+  .card {
+    border: 1px solid #dadef2;
+    box-shadow: 2px 4px 12px #dadef2;
+    border-radius: 10px;
+    margin-bottom: 24px;
+  }
+
+  .footer {
+    background: #f5f6fa;
+    color: #878ca8;
+
+    h3 {
+      color: #4c4e6b;
+      font-weight: 700;
+    }
+
+    .footer-logo {
+      filter: none;
+    }
+
+    .footer-link {
+      color: #6856b9;
+    }
+
+    .divider {
+      width: 100%;
+      border-top: 1px solid #464b92;
+      margin: 20px 0 16px 0;
+    }
+
+    .policy {
+      justify-content: space-between;
+      align-items: center;
+
+      a,
+      p {
+        color: #0d0c22;
+        font-size: 12px;
+        margin-bottom: 0;
+      }
+      a {
+        font-weight: bold;
+        text-decoration: none;
+        margin-right: 6px;
+      }
+
+      img {
+        height: 24px;
+        margin-top: -8px;
+      }
+
+      @media (max-width: 767.98px) {
+        flex-direction: column;
+
+        img {
+          margin-top: 8px;
+        }
+      }
+    }
+
+    .socials {
+      a {
+        display: inline-block;
+        margin-right: 8px;
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+
+      img {
+        width: 28px;
+        height: 28px;
+      }
+
+      @media (max-width: 767.98px) {
+        justify-content: center;
+      }
+    }
+  }
+
+  .tile {
+    color: #6c6e89;
+
+    .tile-title {
+      color: inherit;
+    }
+  }
+
+  .evm-cosmos {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #dadef2;
+    border-radius: 32px;
+
+    a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      position: relative;
+      height: 32px;
+      line-height: 32px;
+      padding: 0 16px;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        bottom: -1px;
+        right: -1px;
+        border-radius: 32px;
+        background: #464b92;
+        opacity: 0;
+      }
+
+      span {
+        position: relative;
+        z-index: 1;
+      }
+
+      &.current {
+        color: white;
+
+        &::before {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
