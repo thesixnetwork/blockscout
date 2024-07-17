@@ -100,16 +100,7 @@ defmodule BlockScoutWeb.API.V2.AddressView do
            {addresses, names} <-
              Implementation.get_implementation(address_with_smart_contract.smart_contract, @api_true),
            false <- addresses && Enum.empty?(addresses) do
-        addresses
-        |> Enum.zip(names)
-        |> Enum.reduce([], fn {address, name}, acc ->
-          with {:ok, address_hash} <- Chain.string_to_address_hash(address),
-               checksummed_address <- Address.checksum(address_hash) do
-            [%{"address" => checksummed_address, "name" => name} | acc]
-          else
-            _ -> acc
-          end
-        end)
+        Helper.proxy_object_info(addresses, names)
       else
         _ ->
           []
@@ -122,39 +113,30 @@ defmodule BlockScoutWeb.API.V2.AddressView do
     creation_tx = creator_hash && AddressView.transaction_hash(address)
     token = address.token && TokenView.render("token.json", %{token: address.token})
 
-    # todo: added for backward compatibility, remove when frontend unbound from these props
-    {implementation_address, implementation_name} = single_implementation(implementations)
+    extended_info =
+      Map.merge(base_info, %{
+        "creator_address_hash" => creator_hash && Address.checksum(creator_hash),
+        "creation_tx_hash" => creation_tx,
+        "token" => token,
+        "coin_balance" => balance,
+        "exchange_rate" => exchange_rate,
+        "block_number_balance_updated_at" => address.fetched_coin_balance_block_number,
+        "has_decompiled_code" => AddressView.has_decompiled_code?(address),
+        "has_validated_blocks" => Counters.check_if_validated_blocks_at_address(address.hash, @api_true),
+        "has_logs" => Counters.check_if_logs_at_address(address.hash, @api_true),
+        "has_tokens" => Counters.check_if_tokens_at_address(address.hash, @api_true),
+        "has_token_transfers" => Counters.check_if_token_transfers_at_address(address.hash, @api_true),
+        "watchlist_address_id" => Chain.select_watchlist_address_id(get_watchlist_id(conn), address.hash),
+        "has_beacon_chain_withdrawals" => Counters.check_if_withdrawals_at_address(address.hash, @api_true)
+      })
 
-    Map.merge(base_info, %{
-      "creator_address_hash" => creator_hash && Address.checksum(creator_hash),
-      "creation_tx_hash" => creation_tx,
-      "token" => token,
-      "coin_balance" => balance,
-      "exchange_rate" => exchange_rate,
-      # todo: added for backward compatibility, remove when frontend unbound from these props
-      "implementation_address" => implementation_address,
-      "implementation_name" => implementation_name,
-      "implementations" => implementations,
-      "block_number_balance_updated_at" => address.fetched_coin_balance_block_number,
-      "has_decompiled_code" => AddressView.has_decompiled_code?(address),
-      "has_validated_blocks" => Counters.check_if_validated_blocks_at_address(address.hash, @api_true),
-      "has_logs" => Counters.check_if_logs_at_address(address.hash, @api_true),
-      "has_tokens" => Counters.check_if_tokens_at_address(address.hash, @api_true),
-      "has_token_transfers" => Counters.check_if_token_transfers_at_address(address.hash, @api_true),
-      "watchlist_address_id" => Chain.select_watchlist_address_id(get_watchlist_id(conn), address.hash),
-      "has_beacon_chain_withdrawals" => Counters.check_if_withdrawals_at_address(address.hash, @api_true)
-    })
-  end
-
-  defp single_implementation(implementations) do
-    %{"address" => implementation_address, "name" => implementation_name} =
-      if implementations && !Enum.empty?(implementations) do
-        implementations |> Enum.at(0)
-      else
-        %{"address" => nil, "name" => nil}
-      end
-
-    {implementation_address, implementation_name}
+    if Enum.empty?(implementations) do
+      extended_info
+    else
+      Map.merge(extended_info, %{
+        "implementations" => implementations
+      })
+    end
   end
 
   @spec prepare_token_balance(Chain.Address.TokenBalance.t(), boolean()) :: map()

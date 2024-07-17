@@ -186,6 +186,7 @@ config :ethereum_jsonrpc, EthereumJSONRPC.HTTP,
 
 config :ethereum_jsonrpc, EthereumJSONRPC.Geth,
   block_traceable?: ConfigHelper.parse_bool_env_var("ETHEREUM_JSONRPC_GETH_TRACE_BY_BLOCK"),
+  allow_empty_traces?: ConfigHelper.parse_bool_env_var("ETHEREUM_JSONRPC_GETH_ALLOW_EMPTY_TRACES"),
   debug_trace_timeout: System.get_env("ETHEREUM_JSONRPC_DEBUG_TRACE_TRANSACTION_TIMEOUT", "5s"),
   tracer:
     if(ConfigHelper.chain_type() == :polygon_edge,
@@ -198,6 +199,8 @@ config :ethereum_jsonrpc, EthereumJSONRPC.PendingTransaction,
 
 config :ethereum_jsonrpc, EthereumJSONRPC.RequestCoordinator,
   wait_per_timeout: ConfigHelper.parse_time_env_var("ETHEREUM_JSONRPC_WAIT_PER_TIMEOUT", "20s")
+
+config :ethereum_jsonrpc, EthereumJSONRPC.Utility.EndpointAvailabilityChecker, enabled: true
 
 ################
 ### Explorer ###
@@ -365,6 +368,13 @@ config :explorer, Explorer.ExchangeRates.Source.CoinGecko,
   api_key: System.get_env("EXCHANGE_RATES_COINGECKO_API_KEY"),
   coin_id: System.get_env("EXCHANGE_RATES_COINGECKO_COIN_ID"),
   secondary_coin_id: cg_secondary_coin_id
+
+config :explorer, Explorer.ExchangeRates.Source.Mobula,
+  platform: System.get_env("EXCHANGE_RATES_MOBULA_CHAIN_ID"),
+  base_url: System.get_env("EXCHANGE_RATES_MOBULA_BASE_URL", "https://api.mobula.io/api/1"),
+  api_key: System.get_env("EXCHANGE_RATES_MOBULA_API_KEY"),
+  coin_id: System.get_env("EXCHANGE_RATES_MOBULA_COIN_ID"),
+  secondary_coin_id: System.get_env("EXCHANGE_RATES_MOBULA_SECONDARY_COIN_ID")
 
 config :explorer, Explorer.ExchangeRates.Source.DefiLlama, coin_id: System.get_env("EXCHANGE_RATES_DEFILLAMA_COIN_ID")
 
@@ -568,12 +578,25 @@ config :explorer, Explorer.Migrator.SanitizeIncorrectNFTTokenTransfers,
   batch_size: ConfigHelper.parse_integer_env_var("SANITIZE_INCORRECT_NFT_BATCH_SIZE", 100),
   concurrency: ConfigHelper.parse_integer_env_var("SANITIZE_INCORRECT_NFT_CONCURRENCY", 1)
 
+config :explorer, Explorer.Migrator.SanitizeIncorrectWETHTokenTransfers,
+  batch_size: ConfigHelper.parse_integer_env_var("SANITIZE_INCORRECT_WETH_BATCH_SIZE", 100),
+  concurrency: ConfigHelper.parse_integer_env_var("SANITIZE_INCORRECT_WETH_CONCURRENCY", 1)
+
 config :explorer, Explorer.Chain.BridgedToken,
   eth_omni_bridge_mediator: System.get_env("BRIDGED_TOKENS_ETH_OMNI_BRIDGE_MEDIATOR"),
   bsc_omni_bridge_mediator: System.get_env("BRIDGED_TOKENS_BSC_OMNI_BRIDGE_MEDIATOR"),
   poa_omni_bridge_mediator: System.get_env("BRIDGED_TOKENS_POA_OMNI_BRIDGE_MEDIATOR"),
   amb_bridge_mediators: System.get_env("BRIDGED_TOKENS_AMB_BRIDGE_MEDIATORS"),
   foreign_json_rpc: System.get_env("BRIDGED_TOKENS_FOREIGN_JSON_RPC", "")
+
+config :explorer, Explorer.Utility.MissingBalanceOfToken,
+  window_size: ConfigHelper.parse_integer_env_var("MISSING_BALANCE_OF_TOKENS_WINDOW_SIZE", 100)
+
+config :explorer, Explorer.Chain.TokenTransfer,
+  whitelisted_weth_contracts: ConfigHelper.parse_list_env_var("WHITELISTED_WETH_CONTRACTS", ""),
+  weth_token_transfers_filtering_enabled: ConfigHelper.parse_bool_env_var("WETH_TOKEN_TRANSFERS_FILTERING_ENABLED")
+
+config :explorer, Explorer.Chain.Metrics, disabled?: ConfigHelper.parse_bool_env_var("METRICS_DISABLE_PUBLIC", "false")
 
 ###############
 ### Indexer ###
@@ -656,6 +679,9 @@ config :indexer, Indexer.Fetcher.OnDemand.CoinBalance,
 
 config :indexer, Indexer.Fetcher.OnDemand.ContractCode,
   threshold: ConfigHelper.parse_time_env_var("CONTRACT_CODE_ON_DEMAND_FETCHER_THRESHOLD", "5s")
+
+config :indexer, Indexer.Fetcher.OnDemand.TokenInstanceMetadataRefetch,
+  threshold: ConfigHelper.parse_time_env_var("TOKEN_INSTANCE_METADATA_REFETCH_ON_DEMAND_FETCHER_THRESHOLD", "5s")
 
 config :indexer, Indexer.Fetcher.BlockReward.Supervisor,
   disabled?: ConfigHelper.parse_bool_env_var("INDEXER_DISABLE_BLOCK_REWARD_FETCHER")
@@ -776,29 +802,22 @@ config :indexer, Indexer.Fetcher.Optimism.WithdrawalEvent.Supervisor, enabled: C
 
 config :indexer, Indexer.Fetcher.Optimism,
   optimism_l1_rpc: System.get_env("INDEXER_OPTIMISM_L1_RPC"),
-  optimism_l1_portal: System.get_env("INDEXER_OPTIMISM_L1_PORTAL_CONTRACT")
+  optimism_l1_system_config: System.get_env("INDEXER_OPTIMISM_L1_SYSTEM_CONFIG_CONTRACT")
 
-config :indexer, Indexer.Fetcher.Optimism.Deposit,
-  start_block_l1: System.get_env("INDEXER_OPTIMISM_L1_DEPOSITS_START_BLOCK"),
-  batch_size: System.get_env("INDEXER_OPTIMISM_L1_DEPOSITS_BATCH_SIZE")
+config :indexer, Indexer.Fetcher.Optimism.Deposit, batch_size: System.get_env("INDEXER_OPTIMISM_L1_DEPOSITS_BATCH_SIZE")
 
 config :indexer, Indexer.Fetcher.Optimism.OutputRoot,
-  start_block_l1: System.get_env("INDEXER_OPTIMISM_L1_OUTPUT_ROOTS_START_BLOCK"),
   output_oracle: System.get_env("INDEXER_OPTIMISM_L1_OUTPUT_ORACLE_CONTRACT")
 
 config :indexer, Indexer.Fetcher.Optimism.Withdrawal,
-  start_block_l2: System.get_env("INDEXER_OPTIMISM_L2_WITHDRAWALS_START_BLOCK"),
-  message_passer: System.get_env("INDEXER_OPTIMISM_L2_MESSAGE_PASSER_CONTRACT")
-
-config :indexer, Indexer.Fetcher.Optimism.WithdrawalEvent,
-  start_block_l1: System.get_env("INDEXER_OPTIMISM_L1_WITHDRAWALS_START_BLOCK")
+  start_block_l2: System.get_env("INDEXER_OPTIMISM_L2_WITHDRAWALS_START_BLOCK", "1"),
+  message_passer:
+    System.get_env("INDEXER_OPTIMISM_L2_MESSAGE_PASSER_CONTRACT", "0x4200000000000000000000000000000000000016")
 
 config :indexer, Indexer.Fetcher.Optimism.TxnBatch,
-  start_block_l1: System.get_env("INDEXER_OPTIMISM_L1_BATCH_START_BLOCK"),
-  batch_inbox: System.get_env("INDEXER_OPTIMISM_L1_BATCH_INBOX"),
-  batch_submitter: System.get_env("INDEXER_OPTIMISM_L1_BATCH_SUBMITTER"),
   blocks_chunk_size: System.get_env("INDEXER_OPTIMISM_L1_BATCH_BLOCKS_CHUNK_SIZE", "4"),
-  blobs_api_url: System.get_env("INDEXER_OPTIMISM_L1_BATCH_BLOCKSCOUT_BLOBS_API_URL"),
+  eip4844_blobs_api_url: System.get_env("INDEXER_OPTIMISM_L1_BATCH_BLOCKSCOUT_BLOBS_API_URL", ""),
+  celestia_blobs_api_url: System.get_env("INDEXER_OPTIMISM_L1_BATCH_CELESTIA_BLOBS_API_URL", ""),
   genesis_block_l2: ConfigHelper.parse_integer_or_nil_env_var("INDEXER_OPTIMISM_L2_BATCH_GENESIS_BLOCK_NUMBER")
 
 config :indexer, Indexer.Fetcher.Withdrawal.Supervisor,
@@ -878,7 +897,9 @@ config :indexer, Indexer.Fetcher.Arbitrum.TrackingBatchesStatuses,
   messages_to_blocks_shift:
     ConfigHelper.parse_integer_env_var("INDEXER_ARBITRUM_BATCHES_TRACKING_MESSAGES_TO_BLOCKS_SHIFT", 0),
   finalized_confirmations: ConfigHelper.parse_bool_env_var("INDEXER_ARBITRUM_CONFIRMATIONS_TRACKING_FINALIZED", "true"),
-  new_batches_limit: ConfigHelper.parse_integer_env_var("INDEXER_ARBITRUM_NEW_BATCHES_LIMIT", 10)
+  new_batches_limit: ConfigHelper.parse_integer_env_var("INDEXER_ARBITRUM_NEW_BATCHES_LIMIT", 10),
+  node_interface_contract:
+    ConfigHelper.safe_get_env("INDEXER_ARBITRUM_NODE_INTERFACE_CONTRACT", "0x00000000000000000000000000000000000000C8")
 
 config :indexer, Indexer.Fetcher.Arbitrum.TrackingBatchesStatuses.Supervisor,
   enabled: ConfigHelper.parse_bool_env_var("INDEXER_ARBITRUM_BATCHES_TRACKING_ENABLED")

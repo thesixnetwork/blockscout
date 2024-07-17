@@ -29,6 +29,14 @@ defmodule BlockScoutWeb.Notifier do
 
   @check_broadcast_sequence_period 500
 
+  case Application.compile_env(:explorer, :chain_type) do
+    :arbitrum ->
+      @chain_type_specific_events ~w(new_arbitrum_batches new_messages_to_arbitrum_amount)a
+
+    _ ->
+      nil
+  end
+
   def handle_event({:chain_event, :addresses, type, addresses}) when type in [:realtime, :on_demand] do
     Endpoint.broadcast("addresses:new_address", "count", %{count: Counters.address_estimated_count()})
 
@@ -175,10 +183,8 @@ defmodule BlockScoutWeb.Notifier do
             DenormalizationHelper.extend_transaction_preload([
               :token,
               :transaction,
-              from_address: :smart_contract,
-              to_address: :smart_contract,
-              from_address: :names,
-              to_address: :names
+              from_address: [:names, :smart_contract, :proxy_implementations],
+              to_address: [:names, :smart_contract, :proxy_implementations]
             ])
           ))
       )
@@ -202,12 +208,9 @@ defmodule BlockScoutWeb.Notifier do
   def handle_event({:chain_event, :transactions, :realtime, transactions}) do
     base_preloads = [
       :block,
-      created_contract_address: :names,
-      from_address: :names,
-      to_address: :names,
-      created_contract_address: :smart_contract,
-      from_address: :smart_contract,
-      to_address: :smart_contract
+      created_contract_address: [:names, :smart_contract, :proxy_implementations],
+      from_address: [:names, :smart_contract, :proxy_implementations],
+      to_address: [:names, :smart_contract, :proxy_implementations]
     ]
 
     preloads = if API_V2.enabled?(), do: [:token_transfers | base_preloads], else: base_preloads
@@ -248,6 +251,17 @@ defmodule BlockScoutWeb.Notifier do
     Endpoint.broadcast("addresses:#{to_string(address_hash)}", "fetched_bytecode", %{fetched_bytecode: fetched_bytecode})
   end
 
+  def handle_event(
+        {:chain_event, :fetched_token_instance_metadata, :on_demand,
+         [token_contract_address_hash_string, token_id, fetched_token_instance_metadata]}
+      ) do
+    Endpoint.broadcast(
+      "token_instances:#{token_contract_address_hash_string}",
+      "fetched_token_instance_metadata",
+      %{token_id: token_id, fetched_metadata: fetched_token_instance_metadata}
+    )
+  end
+
   def handle_event({:chain_event, :changed_bytecode, :on_demand, [address_hash]}) do
     Endpoint.broadcast("addresses:#{to_string(address_hash)}", "changed_bytecode", %{})
   end
@@ -272,6 +286,16 @@ defmodule BlockScoutWeb.Notifier do
     Endpoint.broadcast("addresses:#{address_current_token_balances.address_hash}", "address_current_token_balances", %{
       address_current_token_balances: address_current_token_balances.address_current_token_balances
     })
+  end
+
+  case Application.compile_env(:explorer, :chain_type) do
+    :arbitrum ->
+      def handle_event({:chain_event, topic, _, _} = event) when topic in @chain_type_specific_events,
+        # credo:disable-for-next-line Credo.Check.Design.AliasUsage
+        do: BlockScoutWeb.Notifiers.Arbitrum.handle_event(event)
+
+    _ ->
+      nil
   end
 
   def handle_event(event) do

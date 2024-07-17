@@ -8,17 +8,21 @@ defmodule RPCTranslatorForwarder do
   defdelegate call(conn, opts), to: RPCTranslator
 end
 
-defmodule BlockScoutWeb.ApiRouter do
+defmodule BlockScoutWeb.Routers.ApiRouter do
   @moduledoc """
   Router for API
   """
   use BlockScoutWeb, :router
-  alias BlockScoutWeb.{AddressTransactionController, APIKeyV2Router, SmartContractsApiV2Router, UtilsApiV2Router}
-  alias BlockScoutWeb.Plug.{CheckAccountAPI, CheckApiV2, RateLimit}
+  alias BlockScoutWeb.AddressTransactionController
+  alias BlockScoutWeb.Routers.{APIKeyV2Router, SmartContractsApiV2Router, TokensApiV2Router, UtilsApiV2Router}
+  alias BlockScoutWeb.Plug.{CheckApiV2, RateLimit}
+  alias BlockScoutWeb.Routers.AccountRouter
 
   @max_query_string_length 5_000
 
   forward("/v2/smart-contracts", SmartContractsApiV2Router)
+  forward("/v2/tokens", TokensApiV2Router)
+
   forward("/v2/key", APIKeyV2Router)
   forward("/v2/utils", UtilsApiV2Router)
 
@@ -34,23 +38,6 @@ defmodule BlockScoutWeb.ApiRouter do
 
     plug(BlockScoutWeb.Plug.Logger, application: :api)
     plug(:accepts, ["json"])
-  end
-
-  pipeline :account_api do
-    plug(
-      Plug.Parsers,
-      parsers: [:urlencoded, :multipart, :json],
-      length: 100_000,
-      query_string_length: @max_query_string_length,
-      pass: ["*/*"],
-      json_decoder: Poison
-    )
-
-    plug(BlockScoutWeb.Plug.Logger, application: :api)
-    plug(:accepts, ["json"])
-    plug(:fetch_session)
-    plug(:protect_from_forgery)
-    plug(CheckAccountAPI)
   end
 
   pipeline :api_v2 do
@@ -98,70 +85,9 @@ defmodule BlockScoutWeb.ApiRouter do
     plug(RateLimit, graphql?: true)
   end
 
-  alias BlockScoutWeb.Account.Api.V2.{AuthenticateController, EmailController, TagsController, UserController}
   alias BlockScoutWeb.API.V2
 
-  scope "/account/v2", as: :account_v2 do
-    pipe_through(:account_api)
-
-    get("/authenticate", AuthenticateController, :authenticate_get)
-    post("/authenticate", AuthenticateController, :authenticate_post)
-
-    get("/get_csrf", UserController, :get_csrf)
-
-    scope "/email" do
-      get("/resend", EmailController, :resend_email)
-    end
-
-    scope "/user" do
-      get("/info", UserController, :info)
-
-      get("/watchlist", UserController, :watchlist)
-      delete("/watchlist/:id", UserController, :delete_watchlist)
-      post("/watchlist", UserController, :create_watchlist)
-      put("/watchlist/:id", UserController, :update_watchlist)
-
-      get("/api_keys", UserController, :api_keys)
-      delete("/api_keys/:api_key", UserController, :delete_api_key)
-      post("/api_keys", UserController, :create_api_key)
-      put("/api_keys/:api_key", UserController, :update_api_key)
-
-      get("/custom_abis", UserController, :custom_abis)
-      delete("/custom_abis/:id", UserController, :delete_custom_abi)
-      post("/custom_abis", UserController, :create_custom_abi)
-      put("/custom_abis/:id", UserController, :update_custom_abi)
-
-      get("/public_tags", UserController, :public_tags_requests)
-      delete("/public_tags/:id", UserController, :delete_public_tags_request)
-      post("/public_tags", UserController, :create_public_tags_request)
-      put("/public_tags/:id", UserController, :update_public_tags_request)
-
-      scope "/tags" do
-        get("/address/", UserController, :tags_address)
-        get("/address/:id", UserController, :tags_address)
-        delete("/address/:id", UserController, :delete_tag_address)
-        post("/address/", UserController, :create_tag_address)
-        put("/address/:id", UserController, :update_tag_address)
-
-        get("/transaction/", UserController, :tags_transaction)
-        get("/transaction/:id", UserController, :tags_transaction)
-        delete("/transaction/:id", UserController, :delete_tag_transaction)
-        post("/transaction/", UserController, :create_tag_transaction)
-        put("/transaction/:id", UserController, :update_tag_transaction)
-      end
-    end
-  end
-
-  scope "/account/v2" do
-    pipe_through(:api)
-    pipe_through(:account_api)
-
-    scope "/tags" do
-      get("/address/:address_hash", TagsController, :tags_address)
-
-      get("/transaction/:transaction_hash", TagsController, :tags_transaction)
-    end
-  end
+  forward("/account", AccountRouter)
 
   scope "/v2/import" do
     pipe_through(:api_v2_no_session)
@@ -198,6 +124,10 @@ defmodule BlockScoutWeb.ApiRouter do
 
       if Application.compile_env(:explorer, :chain_type) == :arbitrum do
         get("/arbitrum-batch/:batch_number", V2.TransactionController, :arbitrum_batch)
+      end
+
+      if Application.compile_env(:explorer, :chain_type) == :optimism do
+        get("/optimism-batch/:batch_number", V2.TransactionController, :optimism_batch)
       end
 
       if Application.compile_env(:explorer, :chain_type) == :suave do
@@ -248,24 +178,6 @@ defmodule BlockScoutWeb.ApiRouter do
       get("/:address_hash_param/nft/collections", V2.AddressController, :nft_collections)
     end
 
-    scope "/tokens" do
-      if Application.compile_env(:explorer, Explorer.Chain.BridgedToken)[:enabled] do
-        get("/bridged", V2.TokenController, :bridged_tokens_list)
-      end
-
-      get("/", V2.TokenController, :tokens_list)
-      get("/:address_hash_param", V2.TokenController, :token)
-      get("/:address_hash_param/counters", V2.TokenController, :counters)
-      get("/:address_hash_param/transfers", V2.TokenController, :transfers)
-      get("/:address_hash_param/holders", V2.TokenController, :holders)
-      get("/:address_hash_param/holders/csv", V2.CSVExportController, :export_token_holders)
-      get("/:address_hash_param/instances", V2.TokenController, :instances)
-      get("/:address_hash_param/instances/:token_id", V2.TokenController, :instance)
-      get("/:address_hash_param/instances/:token_id/transfers", V2.TokenController, :transfers_by_instance)
-      get("/:address_hash_param/instances/:token_id/holders", V2.TokenController, :holders_by_instance)
-      get("/:address_hash_param/instances/:token_id/transfers-count", V2.TokenController, :transfers_count_by_instance)
-    end
-
     scope "/main-page" do
       get("/blocks", V2.MainPageController, :blocks)
       get("/transactions", V2.MainPageController, :transactions)
@@ -307,6 +219,11 @@ defmodule BlockScoutWeb.ApiRouter do
       if Application.compile_env(:explorer, :chain_type) == :optimism do
         get("/txn-batches", V2.OptimismController, :txn_batches)
         get("/txn-batches/count", V2.OptimismController, :txn_batches_count)
+        get("/txn-batches/:l2_block_range_start/:l2_block_range_end", V2.OptimismController, :txn_batches)
+        get("/batches", V2.OptimismController, :batches)
+        get("/batches/count", V2.OptimismController, :batches_count)
+        get("/batches/da/celestia/:height/:commitment", V2.OptimismController, :batch_by_celestia_blob)
+        get("/batches/:internal_id", V2.OptimismController, :batch_by_internal_id)
         get("/output-roots", V2.OptimismController, :output_roots)
         get("/output-roots/count", V2.OptimismController, :output_roots_count)
         get("/deposits", V2.OptimismController, :deposits)
@@ -424,7 +341,15 @@ defmodule BlockScoutWeb.ApiRouter do
         get("/batches", V2.ArbitrumController, :batches)
         get("/batches/count", V2.ArbitrumController, :batches_count)
         get("/batches/:batch_number", V2.ArbitrumController, :batch)
+        get("/batches/da/anytrust/:data_hash", V2.ArbitrumController, :batch_by_data_availability_info)
+        get("/batches/da/celestia/:height/:tx_commitment", V2.ArbitrumController, :batch_by_data_availability_info)
       end
+    end
+
+    scope "/advanced-filters" do
+      get("/", V2.AdvancedFilterController, :list)
+      get("/csv", V2.AdvancedFilterController, :list_csv)
+      get("/methods", V2.AdvancedFilterController, :list_methods)
     end
   end
 
