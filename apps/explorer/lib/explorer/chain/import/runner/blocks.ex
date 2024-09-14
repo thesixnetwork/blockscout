@@ -656,27 +656,35 @@ defmodule Explorer.Chain.Import.Runner.Blocks do
       derived_token_transfers_query
       |> repo.all()
       |> Enum.reduce(changes_initial, fn tt, acc ->
-        token_id = List.first(tt.token_ids)
-        current_key = {tt.token_contract_address_hash, token_id}
+        if is_nil(tt.token_ids) do
+          acc
+        else
+          token_id = List.first(tt.token_ids)
+          current_key = {tt.token_contract_address_hash, token_id}
 
-        params = %{
-          token_contract_address_hash: tt.token_contract_address_hash,
-          token_id: token_id,
-          owner_address_hash: tt.to_address_hash,
-          owner_updated_at_block: tt.block_number,
-          owner_updated_at_log_index: tt.log_index
-        }
+          params = %{
+            token_contract_address_hash: tt.token_contract_address_hash,
+            token_id: token_id,
+            owner_address_hash: tt.to_address_hash,
+            owner_updated_at_block: tt.block_number,
+            owner_updated_at_log_index: tt.log_index
+          }
 
-        Map.put(
-          acc,
-          current_key,
-          Enum.max_by([acc[current_key], params], fn %{
-                                                       owner_updated_at_block: block_number,
-                                                       owner_updated_at_log_index: log_index
-                                                     } ->
-            {block_number, log_index}
-          end)
-        )
+          if is_nil(acc[current_key]) do
+            acc
+          else
+            Map.put(
+              acc,
+              current_key,
+              Enum.max_by([acc[current_key], params], fn %{
+                                                           owner_updated_at_block: block_number,
+                                                           owner_updated_at_log_index: log_index
+                                                         } ->
+                {block_number, log_index}
+              end)
+            )
+          end
+        end
       end)
       |> Map.values()
 
