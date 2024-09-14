@@ -189,6 +189,15 @@ defmodule Indexer.Supervisor do
         configure(ArbitrumRollupMessagesCatchup.Supervisor, [
           [json_rpc_named_arguments: json_rpc_named_arguments, memory_monitor: memory_monitor]
         ]),
+        configure(Indexer.Fetcher.Celo.ValidatorGroupVotes.Supervisor, [
+          [json_rpc_named_arguments: json_rpc_named_arguments, memory_monitor: memory_monitor]
+        ]),
+        configure(Indexer.Fetcher.Celo.EpochBlockOperations.Supervisor, [
+          [json_rpc_named_arguments: json_rpc_named_arguments, memory_monitor: memory_monitor]
+        ]),
+        configure(Indexer.Fetcher.Filecoin.AddressInfo.Supervisor, [
+          [memory_monitor: memory_monitor]
+        ]),
         {Indexer.Fetcher.Beacon.Blob.Supervisor, [[memory_monitor: memory_monitor]]},
 
         # Out-of-band fetchers
@@ -282,6 +291,7 @@ defmodule Indexer.Supervisor do
   end
 
   defp configure(process, opts) do
+    # todo: shouldn't we pay attention to process.disabled?() predicate?
     if Application.get_env(:indexer, process)[:enabled] do
       [{process, opts}]
     else
