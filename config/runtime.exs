@@ -70,7 +70,8 @@ config :block_scout_web, BlockScoutWeb.Chain,
   has_emission_funds: false,
   show_maintenance_alert: ConfigHelper.parse_bool_env_var("SHOW_MAINTENANCE_ALERT"),
   enable_testnet_label: ConfigHelper.parse_bool_env_var("SHOW_TESTNET_LABEL"),
-  testnet_label_text: System.get_env("TESTNET_LABEL_TEXT", "Testnet")
+  testnet_label_text: System.get_env("TESTNET_LABEL_TEXT", "Testnet"),
+  sixscan_url: System.get_env("SIXSCAN_URL")
 
 config :block_scout_web, :footer,
   logo: System.get_env("FOOTER_LOGO"),

@@ -87,7 +87,7 @@ config :block_scout_web, BlockScoutWeb.CSPHeader,
   amplitude_url: System.get_env("AMPLITUDE_URL", "https://api2.amplitude.com/2/httpapi")
 
 # sixscan_url is used to display a link to the SixScan security report
-config :block_scout_web, sixscan_url: System.get_env("SIXSCAN_URL", "https://sixscan.io")
+config :block_scout_web, sixscan_url: System.get_env("SIXSCAN_URL")
 
 # Configures Ueberauth local settings
 config :ueberauth, Ueberauth,
