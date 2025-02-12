@@ -29,14 +29,12 @@ defmodule Explorer.ChainTest do
   alias Explorer.{Chain, Etherscan}
   alias Explorer.Chain.Address.Counters
   alias Explorer.Chain.Block.Reader.General, as: BlockGeneralReader
-  alias Explorer.Chain.Cache.Block, as: BlockCache
-  alias Explorer.Chain.Cache.Transaction, as: TransactionCache
-  alias Explorer.Chain.Cache.Counters.PendingBlockOperationCount
+  alias Explorer.Chain.Cache.Counters.{BlocksCount, TransactionsCount, PendingBlockOperationCount}
   alias Explorer.Chain.InternalTransaction.Type
 
   alias Explorer.Chain.Supply.ProofOfAuthority
-  alias Explorer.Counters.AddressesWithBalanceCounter
-  alias Explorer.Counters.AddressesCounter
+  alias Explorer.Chain.Cache.Counters.AddressesWithBalanceCount
+  alias Explorer.Chain.Cache.Counters.AddressesCount
 
   @first_topic_hex_string "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
   @second_topic_hex_string "0x000000000000000000000000e8ddc5c7a2d2f0d7a9798459c0104fdf5e987aca"
@@ -86,8 +84,8 @@ defmodule Explorer.ChainTest do
       insert(:address, fetched_coin_balance: 1)
       insert(:address, fetched_coin_balance: 2)
 
-      start_supervised!(AddressesWithBalanceCounter)
-      AddressesWithBalanceCounter.consolidate()
+      start_supervised!(AddressesWithBalanceCount)
+      AddressesWithBalanceCount.consolidate()
 
       addresses_with_balance = Counters.count_addresses_with_balance_from_cache()
 
@@ -102,8 +100,8 @@ defmodule Explorer.ChainTest do
       insert(:address, fetched_coin_balance: 1)
       insert(:address, fetched_coin_balance: 2)
 
-      start_supervised!(AddressesCounter)
-      AddressesCounter.consolidate()
+      start_supervised!(AddressesCount)
+      AddressesCount.consolidate()
 
       addresses_with_balance = Counters.address_estimated_count()
 
@@ -112,7 +110,7 @@ defmodule Explorer.ChainTest do
     end
 
     test "returns 0 on empty table" do
-      start_supervised!(AddressesCounter)
+      start_supervised!(AddressesCount)
       assert 0 == Counters.address_estimated_count()
     end
   end
@@ -932,8 +930,8 @@ defmodule Explorer.ChainTest do
 
   describe "indexed_ratio_blocks/0" do
     setup do
-      Supervisor.terminate_child(Explorer.Supervisor, Explorer.Chain.Cache.Block.child_id())
-      Supervisor.restart_child(Explorer.Supervisor, Explorer.Chain.Cache.Block.child_id())
+      Supervisor.terminate_child(Explorer.Supervisor, Explorer.Chain.Cache.Counters.BlocksCount.child_id())
+      Supervisor.restart_child(Explorer.Supervisor, Explorer.Chain.Cache.Counters.BlocksCount.child_id())
 
       on_exit(fn ->
         Application.put_env(:indexer, :first_block, 0)
@@ -945,7 +943,7 @@ defmodule Explorer.ChainTest do
         insert(:block, number: index, consensus: true)
       end
 
-      BlockCache.estimated_count()
+      BlocksCount.estimated_count()
 
       assert Decimal.compare(Chain.indexed_ratio_blocks(), Decimal.from_float(0.5)) == :eq
     end
@@ -960,7 +958,7 @@ defmodule Explorer.ChainTest do
         Process.sleep(200)
       end
 
-      BlockCache.estimated_count()
+      BlocksCount.estimated_count()
 
       assert Decimal.compare(Chain.indexed_ratio_blocks(), 1) == :eq
     end
@@ -973,7 +971,7 @@ defmodule Explorer.ChainTest do
         Process.sleep(200)
       end
 
-      BlockCache.estimated_count()
+      BlocksCount.estimated_count()
 
       assert Decimal.compare(Chain.indexed_ratio_blocks(), 1) == :eq
     end
@@ -2139,13 +2137,13 @@ defmodule Explorer.ChainTest do
 
   describe "transaction_estimated_count/1" do
     setup do
-      Supervisor.terminate_child(Explorer.Supervisor, Explorer.Chain.Cache.Transaction.child_id())
-      Supervisor.restart_child(Explorer.Supervisor, Explorer.Chain.Cache.Transaction.child_id())
+      Supervisor.terminate_child(Explorer.Supervisor, Explorer.Chain.Cache.Counters.TransactionsCount.child_id())
+      Supervisor.restart_child(Explorer.Supervisor, Explorer.Chain.Cache.Counters.TransactionsCount.child_id())
       :ok
     end
 
     test "returns integer" do
-      assert is_integer(TransactionCache.estimated_count())
+      assert is_integer(TransactionsCount.estimated_count())
     end
   end
 
