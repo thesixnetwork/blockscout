@@ -17,6 +17,8 @@ defmodule Explorer.Chain.Cache.Counters.AddressesCoinBalanceSumMinusBurnt do
   alias Explorer.Chain.Cache.Helper
   alias Explorer.Etherscan
 
+  @cache_key "addresses_coin_balance_sum_minus_burnt"
+
   defp handle_fallback(:sum_minus_burnt) do
     # This will get the task PID if one exists, check if it's running and launch
     # a new task if task doesn't exist or it's not running.
@@ -35,7 +37,7 @@ defmodule Explorer.Chain.Cache.Counters.AddressesCoinBalanceSumMinusBurnt do
           result = Etherscan.fetch_sum_coin_total_supply_minus_burnt()
 
           params = %{
-            counter_type: "sum_coin_total_supply_minus_burnt",
+            counter_type: @cache_key,
             value: result
           }
 

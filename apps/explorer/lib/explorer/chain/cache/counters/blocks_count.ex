@@ -23,7 +23,7 @@ defmodule Explorer.Chain.Cache.Counters.BlocksCount do
   alias Explorer.Chain.Cache.Helper
   alias Explorer.Repo
 
-  @cache_key "block_count"
+  @cache_key "blocks_count"
 
   @doc """
   Estimated count of `t:Explorer.Chain.Block.t/0`.
@@ -41,7 +41,7 @@ defmodule Explorer.Chain.Cache.Counters.BlocksCount do
         |> Decimal.to_integer()
 
       if cached_value_from_db === 0 do
-        estimated_count_from_blocks()
+        estimated_blocks_count()
       else
         cached_value_from_db
       end
@@ -50,7 +50,7 @@ defmodule Explorer.Chain.Cache.Counters.BlocksCount do
     end
   end
 
-  defp estimated_count_from_blocks do
+  defp estimated_blocks_count do
     count = Helper.estimated_count_from("blocks")
 
     if is_nil(count), do: 0, else: trunc(count * 0.90)

@@ -19,18 +19,30 @@ defmodule Explorer.Chain.Cache.Counters.GasUsageSum do
     ttl_check_interval: :timer.seconds(1),
     callback: &async_task_on_deletion(&1)
 
+  alias Explorer.Chain.Cache.Counters.LastFetchedCounter
   alias Explorer.Chain.Cache.Helper
   alias Explorer.Chain.Transaction
   alias Explorer.Repo
 
+  @cache_key "gas_usage_sum"
+
   @spec total() :: non_neg_integer()
   def total do
-    cached_value = __MODULE__.get_sum()
+    cached_value_from_ets = __MODULE__.get_sum()
 
-    if is_nil(cached_value) do
-      0
+    if is_nil(cached_value_from_ets) do
+      cached_value_from_db =
+        @cache_key
+        |> LastFetchedCounter.get()
+        |> Decimal.to_integer()
+
+      if cached_value_from_db === 0 do
+        0
+      else
+        cached_value_from_db
+      end
     else
-      cached_value
+      cached_value_from_ets
     end
   end
 
@@ -51,6 +63,13 @@ defmodule Explorer.Chain.Cache.Counters.GasUsageSum do
         Task.start_link(fn ->
           try do
             result = fetch_sum_gas_used()
+
+            params = %{
+              counter_type: @cache_key,
+              value: result
+            }
+
+            LastFetchedCounter.upsert(params)
 
             set_sum(%ConCache.Item{ttl: Helper.ttl(__MODULE__, "CACHE_TOTAL_GAS_USAGE_PERIOD"), value: result})
           rescue
