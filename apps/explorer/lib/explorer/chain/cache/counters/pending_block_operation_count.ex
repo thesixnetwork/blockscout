@@ -13,39 +13,26 @@ defmodule Explorer.Chain.Cache.Counters.PendingBlockOperationCount do
 
   require Logger
 
+  alias Explorer.Chain.Cache.Counters.Helper, as: CacheCountersHelper
   alias Explorer.Chain.Cache.Counters.LastFetchedCounter
-  alias Explorer.Chain.Cache.Helper
   alias Explorer.Chain.PendingBlockOperation
   alias Explorer.Repo
 
   @cache_key "pending_block_operations_count"
 
   @doc """
-  Estimated count of `t:Explorer.Chain.PendingBlockOperation.t/0`.
+  Gets count of `t:Explorer.Chain.PendingBlockOperation.t/0`.
 
   """
-  @spec estimated_count() :: non_neg_integer()
-  def estimated_count do
+  @spec get() :: non_neg_integer()
+  def get do
     cached_value_from_ets = __MODULE__.get_count()
 
-    if is_nil(cached_value_from_ets) do
-      cached_value_from_db =
-        @cache_key
-        |> LastFetchedCounter.get()
-        |> Decimal.to_integer()
-
-      if cached_value_from_db === 0 do
-        estimated_pending_block_operations_count()
-      else
-        cached_value_from_db
-      end
-    else
-      cached_value_from_ets
-    end
+    CacheCountersHelper.evaluate_count(@cache_key, cached_value_from_ets, estimated_pending_block_operations_count())
   end
 
   defp estimated_pending_block_operations_count do
-    count = Helper.estimated_count_from("pending_block_operations")
+    count = CacheCountersHelper.estimated_count_from("pending_block_operations")
 
     if is_nil(count), do: 0, else: max(count, 0)
   end
@@ -74,7 +61,7 @@ defmodule Explorer.Chain.Cache.Counters.PendingBlockOperationCount do
 
           LastFetchedCounter.upsert(params)
 
-          set_count(%ConCache.Item{ttl: Helper.ttl(__MODULE__, "CACHE_PBO_COUNT_PERIOD"), value: result})
+          set_count(%ConCache.Item{ttl: CacheCountersHelper.ttl(__MODULE__, "CACHE_PBO_COUNT_PERIOD"), value: result})
         rescue
           e ->
             Logger.debug([

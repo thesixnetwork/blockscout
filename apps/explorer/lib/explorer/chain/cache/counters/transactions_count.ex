@@ -13,40 +13,27 @@ defmodule Explorer.Chain.Cache.Counters.TransactionsCount do
 
   require Logger
 
+  alias Explorer.Chain.Cache.Counters.Helper, as: CacheCountersHelper
   alias Explorer.Chain.Cache.Counters.LastFetchedCounter
-  alias Explorer.Chain.Cache.Helper
   alias Explorer.Chain.Transaction
   alias Explorer.Repo
 
   @cache_key "transactions_count"
 
   @doc """
-  Estimated count of `t:Explorer.Chain.Transaction.t/0`.
+  Gets count of `t:Explorer.Chain.Transaction.t/0`.
 
-  Estimated count of both collated and pending transactions using the transactions table statistics.
+  Gets count of both collated and pending transactions using the transactions table statistics.
   """
-  @spec estimated_count() :: non_neg_integer()
-  def estimated_count do
+  @spec get() :: non_neg_integer()
+  def get do
     cached_value_from_ets = __MODULE__.get_count()
 
-    if is_nil(cached_value_from_ets) do
-      cached_value_from_db =
-        @cache_key
-        |> LastFetchedCounter.get()
-        |> Decimal.to_integer()
-
-      if cached_value_from_db === 0 do
-        estimated_transactions_count()
-      else
-        cached_value_from_db
-      end
-    else
-      cached_value_from_ets
-    end
+    CacheCountersHelper.evaluate_count(@cache_key, cached_value_from_ets, estimated_transactions_count())
   end
 
   defp estimated_transactions_count do
-    count = Helper.estimated_count_from("transactions")
+    count = CacheCountersHelper.estimated_count_from("transactions")
 
     if is_nil(count), do: 0, else: count
   end
@@ -75,7 +62,7 @@ defmodule Explorer.Chain.Cache.Counters.TransactionsCount do
 
           LastFetchedCounter.upsert(params)
 
-          set_count(%ConCache.Item{ttl: Helper.ttl(__MODULE__, "CACHE_TXS_COUNT_PERIOD"), value: result})
+          set_count(%ConCache.Item{ttl: CacheCountersHelper.ttl(__MODULE__, "CACHE_TXS_COUNT_PERIOD"), value: result})
         rescue
           e ->
             Logger.debug([

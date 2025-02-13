@@ -890,7 +890,7 @@ defmodule Explorer.ChainTest do
         insert(:block, number: index, consensus: true)
       end
 
-      BlocksCount.estimated_count()
+      BlocksCount.get()
 
       assert Decimal.compare(Chain.indexed_ratio_blocks(), Decimal.from_float(0.5)) == :eq
     end
@@ -905,7 +905,7 @@ defmodule Explorer.ChainTest do
         Process.sleep(200)
       end
 
-      BlocksCount.estimated_count()
+      BlocksCount.get()
 
       assert Decimal.compare(Chain.indexed_ratio_blocks(), 1) == :eq
     end
@@ -918,7 +918,7 @@ defmodule Explorer.ChainTest do
         Process.sleep(200)
       end
 
-      BlocksCount.estimated_count()
+      BlocksCount.get()
 
       assert Decimal.compare(Chain.indexed_ratio_blocks(), 1) == :eq
     end
@@ -2090,7 +2090,7 @@ defmodule Explorer.ChainTest do
     end
 
     test "returns integer" do
-      assert is_integer(TransactionsCount.estimated_count())
+      assert is_integer(TransactionsCount.get())
     end
   end
 

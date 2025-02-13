@@ -16,8 +16,8 @@ defmodule Explorer.Chain.Cache.Counters.AddressesCount do
     update_interval_in_milliseconds: [:explorer, [__MODULE__, :update_interval_in_milliseconds]]
 
   alias Explorer.Chain.Address
+  alias Explorer.Chain.Cache.Counters.Helper, as: CacheCountersHelper
   alias Explorer.Chain.Cache.Counters.LastFetchedCounter
-  alias Explorer.Chain.Cache.Helper
   alias Explorer.Repo
 
   @table_name :addresses_counter
@@ -97,16 +97,7 @@ defmodule Explorer.Chain.Cache.Counters.AddressesCount do
   defp do_fetch([{_, result}]), do: result
 
   defp do_fetch([]) do
-    cached_value_from_db =
-      @cache_key
-      |> LastFetchedCounter.get()
-      |> Decimal.to_integer()
-
-    if cached_value_from_db === 0 do
-      estimated_addresses_count()
-    else
-      cached_value_from_db
-    end
+    CacheCountersHelper.evaluate_count(@cache_key, nil, estimated_addresses_count())
   end
 
   @doc """
@@ -140,7 +131,7 @@ defmodule Explorer.Chain.Cache.Counters.AddressesCount do
   def enable_consolidation?, do: @enable_consolidation
 
   defp estimated_addresses_count do
-    count = Helper.estimated_count_from("addresses")
+    count = CacheCountersHelper.estimated_count_from("addresses")
 
     if is_nil(count), do: 0, else: count
   end

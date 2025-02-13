@@ -13,8 +13,8 @@ defmodule Explorer.Chain.Cache.Counters.AddressesCoinBalanceSumMinusBurnt do
     global_ttl: :infinity,
     callback: &async_task_on_deletion(&1)
 
+  alias Explorer.Chain.Cache.Counters.Helper, as: CacheCountersHelper
   alias Explorer.Chain.Cache.Counters.LastFetchedCounter
-  alias Explorer.Chain.Cache.Helper
   alias Explorer.Etherscan
 
   @cache_key "addresses_coin_balance_sum_minus_burnt"
@@ -43,7 +43,10 @@ defmodule Explorer.Chain.Cache.Counters.AddressesCoinBalanceSumMinusBurnt do
 
           LastFetchedCounter.upsert(params)
 
-          set_sum_minus_burnt(%ConCache.Item{ttl: Helper.ttl(__MODULE__, "CACHE_ADDRESS_SUM_PERIOD"), value: result})
+          set_sum_minus_burnt(%ConCache.Item{
+            ttl: CacheCountersHelper.ttl(__MODULE__, "CACHE_ADDRESS_SUM_PERIOD"),
+            value: result
+          })
         rescue
           e ->
             Logger.debug([

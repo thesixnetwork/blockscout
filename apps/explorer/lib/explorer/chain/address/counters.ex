@@ -10,6 +10,7 @@ defmodule Explorer.Chain.Address.Counters do
   alias Explorer.{Chain, Repo}
 
   alias Explorer.Chain.Cache.Counters.{
+    AddressTabsElementsCount,
     AddressTokenTransfersCount,
     AddressTransactionsCount,
     AddressTransactionsGasUsageSum
@@ -27,7 +28,6 @@ defmodule Explorer.Chain.Address.Counters do
     Withdrawal
   }
 
-  alias Explorer.Chain.Cache.Counters.AddressTabsElementsCount
   alias Explorer.Chain.Celo.ElectionReward, as: CeloElectionReward
 
   require Logger

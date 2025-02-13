@@ -37,8 +37,6 @@ defmodule Explorer.Chain do
 
   alias Explorer.Account.WatchlistAddress
 
-  alias Explorer.Chain.Cache.Counters.{LastFetchedCounter, TokenHoldersCount, TokenTransfersCount}
-
   alias Explorer.Chain
 
   alias Explorer.Chain.{
@@ -76,14 +74,17 @@ defmodule Explorer.Chain do
   alias Explorer.Chain.Cache.Counters.{
     BlocksCount,
     ContractsCount,
+    LastFetchedCounter,
     NewContractsCount,
     NewVerifiedContractsCount,
     PendingBlockOperationCount,
+    TokenHoldersCount,
+    TokenTransfersCount,
     VerifiedContractsCount,
     WithdrawalsSum
   }
 
-  alias Explorer.Chain.Cache.Helper, as: CacheHelper
+  alias Explorer.Chain.Cache.Counters.Helper, as: CacheCountersHelper
   alias Explorer.Chain.Fetcher.{CheckBytecodeMatchingOnDemand, LookUpSmartContractSourcesOnDemand}
   alias Explorer.Chain.InternalTransaction.{CallType, Type}
   alias Explorer.Chain.SmartContract.Proxy.Models.Implementation
@@ -877,7 +878,7 @@ defmodule Explorer.Chain do
   end
 
   defp check_indexing_internal_transactions_threshold do
-    pbo_count = PendingBlockOperationCount.estimated_count()
+    pbo_count = PendingBlockOperationCount.get()
 
     if pbo_count <
          Application.get_env(:indexer, Indexer.Fetcher.InternalTransaction)[:indexing_finished_threshold] do
@@ -1494,7 +1495,7 @@ defmodule Explorer.Chain do
         _ ->
           divisor = max_saved_block_number - min_blockchain_block_number - BlockNumberHelper.null_rounds_count() + 1
 
-          ratio = get_ratio(BlocksCount.estimated_count(), divisor)
+          ratio = get_ratio(BlocksCount.get(), divisor)
 
           ratio
           |> (&if(
@@ -1747,7 +1748,7 @@ defmodule Explorer.Chain do
   def get_table_rows_total_count(module, options) do
     table_name = module.__schema__(:source)
 
-    count = CacheHelper.estimated_count_from(table_name, options)
+    count = CacheCountersHelper.estimated_count_from(table_name, options)
 
     if is_nil(count) do
       select_repo(options).aggregate(module, :count, timeout: :infinity)
