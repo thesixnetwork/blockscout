@@ -33,7 +33,23 @@ defmodule Explorer.Chain.Cache.Counters.Helper do
     DateTime.to_unix(utc_now, :millisecond)
   end
 
-  def fetch_from_ets_cache(key, cache_name, default \\ nil) do
+  @doc """
+    Fetches a value from the ETS cache.
+
+    This function fetches a value from the ETS cache by looking up the key in the
+    specified cache table. If the key is found, it returns the value. Otherwise, it
+    returns the default value.
+
+    ## Parameters
+    - `cache_name`: The name of the cache table to fetch from.
+    - `key`: The key to fetch from the cache.
+    - `default`: The default value to return if the key is not found.
+
+    ## Returns
+    - The value associated with the key in the cache table or the default value.
+  """
+  @spec fetch_from_ets_cache(atom(), binary() | atom() | tuple(), any()) :: any()
+  def fetch_from_ets_cache(cache_name, key, default \\ nil) do
     case :ets.lookup(cache_name, key) do
       [{_, value}] ->
         value
@@ -43,10 +59,37 @@ defmodule Explorer.Chain.Cache.Counters.Helper do
     end
   end
 
+  @doc """
+  Inserts a key-value pair into an ETS (Erlang Term Storage) cache.
+
+  ## Parameters
+
+    - `cache_name`: The name of the ETS table.
+    - `key`: The key to insert into the cache.
+    - `value`: The value associated with the key.
+
+  ## Examples
+
+      iex> put_into_ets_cache(:my_cache, :some_key, "some_value")
+      true
+
+  """
+  @spec put_into_ets_cache(atom(), binary() | atom() | tuple(), any()) :: any()
   def put_into_ets_cache(cache_name, key, value) do
     :ets.insert(cache_name, {key, value})
   end
 
+  @doc """
+  Creates a new ETS (Erlang Term Storage) table with the given `cache_name` if it does not already exist.
+
+  ## Parameters
+    - cache_name: The name of the cache table to be created.
+
+  ## Returns
+    - The table identifier if the table is created.
+    - `nil` if the table already exists.
+  """
+  @spec create_cache_table(atom()) :: any()
   def create_cache_table(cache_name) do
     if :ets.whereis(cache_name) == :undefined do
       :ets.new(cache_name, @ets_opts)
