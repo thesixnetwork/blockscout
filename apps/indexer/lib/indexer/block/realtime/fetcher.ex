@@ -364,7 +364,7 @@ defmodule Indexer.Block.Realtime.Fetcher do
       # `op_eip1559_config_updates`, and `op_interop_messages` tables
       # previously written starting from the reorg block number
       defp remove_assets_by_number(reorg_block) do
-        # credo:disable-for-lines:4 Credo.Check.Design.AliasUsage
+        # credo:disable-for-lines:5 Credo.Check.Design.AliasUsage
         Indexer.Fetcher.Optimism.EIP1559ConfigUpdate.handle_realtime_l2_reorg(reorg_block)
         Indexer.Fetcher.Optimism.InteropMessage.handle_realtime_l2_reorg(reorg_block)
         Indexer.Fetcher.Optimism.InteropMessageFailed.handle_realtime_l2_reorg(reorg_block)
