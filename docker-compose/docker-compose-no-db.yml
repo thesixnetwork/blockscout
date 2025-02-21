@@ -11,7 +11,18 @@ services:
       - smart-contract-verifier
       - redis_db
     image: blockscout/blockscout:${DOCKER_TAG:-latest}
-    pull_policy: always
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      args:
+        CACHE_EXCHANGE_RATES_PERIOD: ""
+        API_V1_READ_METHODS_DISABLED: "false"
+        DISABLE_WEBAPP: "false"
+        API_V1_WRITE_METHODS_DISABLED: "false"
+        CACHE_TOTAL_GAS_USAGE_COUNTER_ENABLED: ""
+        CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL: ""
+        ADMIN_PANEL_ENABLED: ""
+        RELEASE_VERSION: 5.1.4
     restart: always
     stop_grace_period: 5m
     container_name: 'blockscout'
@@ -20,10 +31,6 @@ services:
       - 'host.docker.internal:host-gateway'
     env_file:
       -  ./envs/common-blockscout.env
-    environment:
-        ETHEREUM_JSONRPC_VARIANT: 'geth'
-        ECTO_USE_SSL: 'false'
-        SECRET_KEY_BASE: '56NtB48ear7+wMSf0IQuWDAAazhpb31qyc7GiyspBP2vh7t5zlCsF5QDv76chXeN'
     ports:
       - 4000:4000
     volumes:
