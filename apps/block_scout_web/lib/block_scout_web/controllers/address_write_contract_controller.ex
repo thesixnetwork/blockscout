@@ -15,8 +15,7 @@ defmodule BlockScoutWeb.AddressWriteContractController do
   alias BlockScoutWeb.AddressView
   alias Explorer.{Chain, Market}
   alias Explorer.Chain.Address
-  alias Explorer.ExchangeRates.Token
-  alias Indexer.Fetcher.CoinBalanceOnDemand
+  alias Indexer.Fetcher.OnDemand.CoinBalance, as: CoinBalanceOnDemand
 
   def index(conn, %{"address_id" => address_hash_string} = params) do
     address_options = [
@@ -35,7 +34,7 @@ defmodule BlockScoutWeb.AddressWriteContractController do
       type: :regular,
       action: :write,
       custom_abi: custom_abi?,
-      exchange_rate: Market.get_exchange_rate(Explorer.coin()) || Token.null()
+      exchange_rate: Market.get_coin_exchange_rate()
     ]
 
     with false <- AddressView.contract_interaction_disabled?(),

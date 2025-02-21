@@ -31,9 +31,9 @@
           <%= if Map.has_key?(@chart_config, :market) || price_chart_legend_enabled? do %>
 
             <%# THE FOLLOWING LINE PREVENTS COPY/PASTE ERRORS %>
-            <%# Explicity put @chart_config.market in a variable %>
+            <%# Explicitly put @chart_config.market in a variable %>
             <%# This is done so that when people add a new chart source, x, %>
-            <%# They wont just access @chart_config.x w/o first checking if x exists%>
+            <%# They wont just access @chart_config.x w/o first checking if x exists %>
             <% market_chart_config = Map.has_key?(@chart_config, :market) && @chart_config.market%>
 
             <%= if price_chart_legend_enabled? || Enum.member?(market_chart_config, :price) do %>
@@ -92,18 +92,20 @@
       <!-- Stats -->
       <div class="dashboard-banner-network-plain-container">
         <div class="dashboard-banner-network-stats">
-          <%= case @average_block_time do %>
-            <% {:error, :disabled} -> %>
-              <%= nil %>
-            <% average_block_time -> %>
-              <div class="dashboard-banner-network-stats-item dashboard-banner-network-stats-item-1">
-                <span class="dashboard-banner-network-stats-label">
-                  <%= gettext "Average block time" %>
-                </span>
-                <span class="dashboard-banner-network-stats-value" data-selector="average-block-time">
-                  <%= Timex.format_duration(average_block_time, Explorer.Counters.AverageBlockTimeDurationFormat) %>
-                </span>
-              </div>
+          <%= unless Application.get_env(:explorer, :chain_type) == :optimism do %>
+            <%= case @average_block_time do %>
+              <% {:error, :disabled} -> %>
+                <%= nil %>
+              <% average_block_time -> %>
+                <div class="dashboard-banner-network-stats-item dashboard-banner-network-stats-item-1">
+                  <span class="dashboard-banner-network-stats-label">
+                    <%= gettext "Average block time" %>
+                  </span>
+                  <span class="dashboard-banner-network-stats-value" data-selector="average-block-time">
+                    <%= Timex.format_duration(average_block_time, Explorer.Counters.AverageBlockTimeDurationFormat) %>
+                  </span>
+                </div>
+            <% end %>
           <% end %>
           <div class="dashboard-banner-network-stats-item dashboard-banner-network-stats-item-2">
             <span class="dashboard-banner-network-stats-label">
@@ -172,7 +174,7 @@
         <div hidden data-selector="loading-message" class="col-lg-3" >
          <div data-selector="chain-block">
            <div class="tile tile-type-block n-p d-flex flex-column">
-             <a class="tile-title"><span class="tile-loader tile-label-loader"></span> </a> 
+             <a class="tile-title"><span class="tile-loader tile-label-loader"></span> </a>
              <div class="tile-bottom-contents">
                <div class="dark-block-loader"></div>
                <div class="dark-block-loader"></div>
@@ -183,7 +185,7 @@
         <div hidden data-selector="loading-message" class="col-lg-3" >
          <div data-selector="chain-block">
            <div class="tile tile-type-block n-p d-flex flex-column">
-             <a class="tile-title"><span class="tile-loader tile-label-loader"></span> </a> 
+             <a class="tile-title"><span class="tile-loader tile-label-loader"></span> </a>
              <div class="tile-bottom-contents">
                <div class="dark-block-loader"></div>
                <div class="dark-block-loader"></div>
@@ -201,7 +203,7 @@
             </div>
            </div>
          </div>
-        </div>   
+        </div>
       </div>
     </div>
   </div>

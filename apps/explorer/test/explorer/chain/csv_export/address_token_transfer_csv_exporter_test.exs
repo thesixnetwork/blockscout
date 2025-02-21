@@ -1,6 +1,7 @@
 defmodule Explorer.Chain.AddressTokenTransferCsvExporterTest do
   use Explorer.DataCase
 
+  alias Explorer.Chain.Address
   alias Explorer.Chain.CSVExport.AddressTokenTransferCsvExporter
 
   describe "export/3" do
@@ -14,17 +15,18 @@ defmodule Explorer.Chain.AddressTokenTransferCsvExporterTest do
 
       token_transfer =
         insert(:token_transfer, transaction: transaction, from_address: address, block_number: transaction.block_number)
+        |> Repo.preload([:token, :transaction])
 
       from_period = Timex.format!(Timex.shift(Timex.now(), minutes: -1), "%Y-%m-%d", :strftime)
       to_period = Timex.format!(Timex.now(), "%Y-%m-%d", :strftime)
 
       [result] =
-        address
+        address.hash
         |> AddressTokenTransferCsvExporter.export(from_period, to_period)
         |> Enum.to_list()
         |> Enum.drop(1)
         |> Enum.map(fn [
-                         [[], tx_hash],
+                         [[], transaction_hash],
                          _,
                          [[], block_number],
                          _,
@@ -38,6 +40,8 @@ defmodule Explorer.Chain.AddressTokenTransferCsvExporterTest do
                          _,
                          [[], type],
                          _,
+                         [[], token_decimals],
+                         _,
                          [[], token_symbol],
                          _,
                          [[], tokens_transferred],
@@ -50,13 +54,14 @@ defmodule Explorer.Chain.AddressTokenTransferCsvExporterTest do
                          _
                        ] ->
           %{
-            tx_hash: tx_hash,
+            transaction_hash: transaction_hash,
             block_number: block_number,
             timestamp: timestamp,
             from_address: from_address,
             to_address: to_address,
             token_contract_address: token_contract_address,
             type: type,
+            token_decimals: token_decimals,
             token_symbol: token_symbol,
             tokens_transferred: tokens_transferred,
             transaction_fee: transaction_fee,
@@ -66,10 +71,15 @@ defmodule Explorer.Chain.AddressTokenTransferCsvExporterTest do
         end)
 
       assert result.block_number == to_string(transaction.block_number)
-      assert result.tx_hash == to_string(transaction.hash)
-      assert result.from_address == token_transfer.from_address_hash |> to_string() |> String.downcase()
-      assert result.to_address == token_transfer.to_address_hash |> to_string() |> String.downcase()
-      assert result.timestamp == to_string(transaction.block.timestamp)
+      assert result.transaction_hash == to_string(transaction.hash)
+      assert result.from_address == Address.checksum(token_transfer.from_address_hash)
+      assert result.to_address == Address.checksum(token_transfer.to_address_hash)
+      assert result.timestamp == to_string(transaction.block_timestamp)
+      assert result.token_symbol == to_string(token_transfer.token.symbol)
+      assert result.token_decimals == to_string(token_transfer.token.decimals)
+      assert result.tokens_transferred == to_string(token_transfer.amount)
+      assert result.status == to_string(token_transfer.transaction.status)
+      assert result.err_code == to_string(token_transfer.transaction.error)
       assert result.type == "OUT"
     end
 
@@ -110,7 +120,7 @@ defmodule Explorer.Chain.AddressTokenTransferCsvExporterTest do
       to_period = Timex.format!(Timex.now(), "%Y-%m-%d", :strftime)
 
       result =
-        address
+        address.hash
         |> AddressTokenTransferCsvExporter.export(from_period, to_period)
         |> Enum.to_list()
         |> Enum.drop(1)

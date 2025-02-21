@@ -51,12 +51,27 @@ dump.rdb
 /docker-compose/services/blockscout-db-data
 /docker-compose/services/stats-db-data
 /docker-compose/services/redis-data
+/docker-compose/services/logs
 /docker-compose/tmp
-/docker-compose/logs
 
 .idea/
 *.iml
 
 .vscode
+.cursorignore
+.cursorrules
+.elixir_ls
 
 **.dec**
+
+*.env.example
+*.env.local
+*.env.staging
+.devcontainer/.blockscout_config
+
+# dets tables
+queue_storage
+tasks_in_progress
+/dets
+
+/temp

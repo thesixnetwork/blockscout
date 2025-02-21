@@ -6,13 +6,14 @@ defmodule BlockScoutWeb.ChainController do
   alias BlockScoutWeb.API.V2.Helper
   alias BlockScoutWeb.{ChainView, Controller}
   alias Explorer.{Chain, PagingOptions, Repo}
+  alias Explorer.Chain.Address.Counters
   alias Explorer.Chain.{Address, Block, Transaction}
   alias Explorer.Chain.Cache.Block, as: BlockCache
   alias Explorer.Chain.Cache.GasUsage
   alias Explorer.Chain.Cache.Transaction, as: TransactionCache
+  alias Explorer.Chain.Search
   alias Explorer.Chain.Supply.RSK
   alias Explorer.Counters.AverageBlockTime
-  alias Explorer.ExchangeRates.Token
   alias Explorer.Market
   alias Phoenix.View
 
@@ -20,7 +21,7 @@ defmodule BlockScoutWeb.ChainController do
     transaction_estimated_count = TransactionCache.estimated_count()
     total_gas_usage = GasUsage.total()
     block_count = BlockCache.estimated_count()
-    address_count = Chain.address_estimated_count()
+    address_count = Counters.address_estimated_count()
 
     market_cap_calculation =
       case Application.get_env(:explorer, :supply) do
@@ -31,7 +32,7 @@ defmodule BlockScoutWeb.ChainController do
           :standard
       end
 
-    exchange_rate = Market.get_exchange_rate(Explorer.coin()) || Token.null()
+    exchange_rate = Market.get_coin_exchange_rate()
 
     transaction_stats = Helper.get_transaction_stats()
 
@@ -66,19 +67,19 @@ defmodule BlockScoutWeb.ChainController do
   end
 
   def search(conn, %{"q" => query}) do
+    search_path =
+      conn
+      |> search_path(:search_results, q: query)
+      |> Controller.full_path()
+
     query
     |> String.trim()
     |> BlockScoutWeb.Chain.from_param()
     |> case do
       {:ok, item} ->
-        redirect_search_results(conn, item)
+        redirect_search_results(conn, item, search_path)
 
       {:error, :not_found} ->
-        search_path =
-          conn
-          |> search_path(:search_results, q: query)
-          |> Controller.full_path()
-
         redirect(conn, to: search_path)
     end
   end
@@ -87,22 +88,21 @@ defmodule BlockScoutWeb.ChainController do
 
   def token_autocomplete(conn, %{"q" => term} = params) when is_binary(term) do
     [paging_options: paging_options] = paging_options(params)
-    offset = (max(paging_options.page_number, 1) - 1) * paging_options.page_size
 
-    results =
+    {results, _} =
       paging_options
-      |> Chain.joint_search(offset, term)
+      |> Search.joint_search(term)
 
     encoded_results =
       results
       |> Enum.map(fn item ->
-        tx_hash_bytes = Map.get(item, :tx_hash)
+        transaction_hash_bytes = Map.get(item, :transaction_hash)
         block_hash_bytes = Map.get(item, :block_hash)
 
         item =
-          if tx_hash_bytes do
+          if transaction_hash_bytes do
             item
-            |> Map.replace(:tx_hash, "0x" <> Base.encode16(tx_hash_bytes, case: :lower))
+            |> Map.replace(:transaction_hash, "0x" <> Base.encode16(transaction_hash_bytes, case: :lower))
           else
             item
           end
@@ -149,7 +149,7 @@ defmodule BlockScoutWeb.ChainController do
     end
   end
 
-  defp redirect_search_results(conn, %Address{} = item) do
+  defp redirect_search_results(conn, %Address{} = item, _search_path) do
     address_path =
       conn
       |> address_path(:show, item)
@@ -158,7 +158,7 @@ defmodule BlockScoutWeb.ChainController do
     redirect(conn, to: address_path)
   end
 
-  defp redirect_search_results(conn, %Block{} = item) do
+  defp redirect_search_results(conn, %Block{} = item, _search_path) do
     block_path =
       conn
       |> block_path(:show, item)
@@ -167,12 +167,16 @@ defmodule BlockScoutWeb.ChainController do
     redirect(conn, to: block_path)
   end
 
-  defp redirect_search_results(conn, %Transaction{} = item) do
+  defp redirect_search_results(conn, %Transaction{} = item, _search_path) do
     transaction_path =
       conn
       |> transaction_path(:show, item)
       |> Controller.full_path()
 
     redirect(conn, to: transaction_path)
+  end
+
+  defp redirect_search_results(conn, _item, search_path) do
+    redirect(conn, to: search_path)
   end
 end

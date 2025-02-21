@@ -2,11 +2,12 @@ import Config
 
 alias EthereumJSONRPC.Variant
 
+config :ethereum_jsonrpc, EthereumJSONRPC.Utility.EndpointAvailabilityChecker, enabled: false
 config :explorer, Explorer.ExchangeRates, enabled: false, store: :none
 
 config :ueberauth, Ueberauth.Strategy.Auth0.OAuth,
   domain: "example.com",
-  client_id: "clien_id",
+  client_id: "client_id",
   client_secret: "secrets"
 
 config :ueberauth, Ueberauth, logout_url: "example.com/logout"

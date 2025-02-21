@@ -16,8 +16,7 @@ defmodule BlockScoutWeb.AddressWithdrawalController do
 
   alias Explorer.Chain.Wei
 
-  alias Explorer.ExchangeRates.Token
-  alias Indexer.Fetcher.CoinBalanceOnDemand
+  alias Indexer.Fetcher.OnDemand.CoinBalance, as: CoinBalanceOnDemand
   alias Phoenix.View
 
   def index(conn, %{"address_id" => address_hash_string, "type" => "JSON"} = params) do
@@ -78,7 +77,7 @@ defmodule BlockScoutWeb.AddressWithdrawalController do
         "index.html",
         address: address,
         coin_balance_status: CoinBalanceOnDemand.trigger_fetch(address),
-        exchange_rate: Market.get_exchange_rate(Explorer.coin()) || Token.null(),
+        exchange_rate: Market.get_coin_exchange_rate(),
         counters_path: address_path(conn, :address_counters, %{"id" => address_hash_string}),
         current_path: Controller.current_full_path(conn),
         tags: get_address_tags(address_hash, current_user(conn))
@@ -107,7 +106,7 @@ defmodule BlockScoutWeb.AddressWithdrawalController do
               "index.html",
               address: address,
               coin_balance_status: nil,
-              exchange_rate: Market.get_exchange_rate(Explorer.coin()) || Token.null(),
+              exchange_rate: Market.get_coin_exchange_rate(),
               counters_path: address_path(conn, :address_counters, %{"id" => address_hash_string}),
               current_path: Controller.current_full_path(conn),
               tags: get_address_tags(address_hash, current_user(conn))
