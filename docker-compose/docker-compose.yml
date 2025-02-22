@@ -89,6 +89,11 @@ services:
       file: ./services/stats.yml
       service: stats
 
+  smart-contract-verifier:
+    extends:
+      file: ./services/smart-contract-verifier.yml
+      service: smart-contract-verifier
+
   user-ops-indexer:
     depends_on:
       - db
