@@ -60,6 +60,11 @@ services:
       file: ./services/user-ops-indexer.yml
       service: user-ops-indexer
 
+  smart-contract-verifier:
+    extends:
+      file: ./services/smart-contract-verifier.yml
+      service: smart-contract-verifier
+
   proxy:
     depends_on:
       - backend
