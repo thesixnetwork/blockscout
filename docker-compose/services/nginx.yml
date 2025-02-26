@@ -22,15 +22,3 @@ services:
         published: 8081
       - target: 443
         published: 443
-    depends_on:
-      - certbot
-    restart: always
-
-  certbot:
-    image: certbot/certbot:latest
-    container_name: certbot
-    volumes:
-      - ../certbot/conf:/etc/letsencrypt
-      - ../certbot/data:/var/www/certbot
-    command: certonly --webroot --webroot-path=/var/www/certbot --email hamdee@six.network --agree-tos --no-eff-email -d devnet.evm.sixscan.io
-    restart: unless-stopped

@@ -110,3 +110,12 @@ services:
     extends:
       file: ./services/nginx.yml
       service: proxy
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - ../certbot/conf:/etc/letsencrypt
+      - ../certbot/data:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email hamdee@six.network --agree-tos --no-eff-email -d devnet.evm.sixscan.io
+    restart: unless-stopped
