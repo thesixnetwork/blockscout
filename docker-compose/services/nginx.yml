@@ -8,6 +8,8 @@ services:
       - 'host.docker.internal:host-gateway'
     volumes:
       - "../proxy:/etc/nginx/templates"
+      - "../certbot/conf:/etc/nginx/ssl"
+      - "../certbot/data:/var/www/certbot"
     environment:
       BACK_PROXY_PASS: ${BACK_PROXY_PASS:-http://backend:4000}
       FRONT_PROXY_PASS: ${FRONT_PROXY_PASS:-http://frontend:3000}
@@ -18,3 +20,17 @@ services:
         published: 8080
       - target: 8081
         published: 8081
+      - target: 443
+        published: 443
+    depends_on:
+      - certbot
+    restart: always
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - ../certbot/conf:/etc/letsencrypt
+      - ../certbot/data:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email hamdee@six.network --agree-tos --no-eff-email -d devnet.evm.sixscan.io
+    restart: unless-stopped
