@@ -20,5 +20,3 @@ services:
         published: 8080
       - target: 8081
         published: 8081
-      - target: 443
-        published: 443
