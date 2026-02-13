@@ -1,7 +1,8 @@
-version: '3.9'
-
 services:
   frontend:
+    # image: node:22.14.0-bullseye
+    # entrypoint: []
+    # restart: no
     image: frontend-custom:latest
     pull_policy: never
     restart: always
@@ -12,6 +13,14 @@ services:
       -  ../envs/common-frontend.env
     environment:
       - NODE_ENV=development
-    # For debugging: uncomment to enable volume mounting for live code changes
+    #   - CHOKIDAR_USEPOLLING=true
+    #   - WATCHPACK_POLLING=true
+    #   - NEXT_PUBLIC_IS_DEVELOPMENT=true
     # volumes:
-    #   - /Users/sankanvicha/Desktop/project/blockscout-frontend:/app
+    #   # Mount local frontend source for hot reload
+    #   - /Users/sankanvicha/Desktop/project/sixscan-evm/blockscout-frontend:/app
+    #   # - frontend_node_modules:/app/node_modules
+    #   - /app/node_modules # เปลี่ยนเป็นแบบ anonymous volume แทน
+    #   - /app/.next # เพิ่มอันนี้เพื่อ cache build file
+    # working_dir: /app
+    # command: sh -lc "yarn install --ignore-engines && yarn dev -p 3000"

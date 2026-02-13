@@ -77,6 +77,12 @@ export function reducer (state = initialState, action) {
       return Object.assign({}, state, { tokenTransferCount })
     }
     case 'RECEIVED_UPDATED_BALANCE': {
+      console.log('📊 Balance state updated:', {
+        previousBalance: state.balance,
+        newBalance: parseFloat(action.msg.balance),
+        blockNumber: action.msg.fetchedCoinBalanceBlockNumber,
+        timestamp: new Date().toLocaleString()
+      })
       return Object.assign({}, state, {
         balanceCard: action.msg.balanceCard,
         balance: parseFloat(action.msg.balance),
@@ -125,6 +131,12 @@ const elements = {
     },
     render ($el, state, oldState) {
       if (oldState.balance === state.balance || (isNaN(oldState.balance) && isNaN(state.balance))) return
+      console.log('🎨 Balance UI updated:', {
+        oldBalance: oldState.balance,
+        newBalance: state.balance,
+        blockNumber: state.fetchedCoinBalanceBlockNumber,
+        timestamp: new Date().toLocaleString()
+      })
       $el.empty().append(state.balanceCard)
       loadTokenBalance(state.fetchedCoinBalanceBlockNumber)
       updateAllCalculatedUsdValues()
@@ -289,10 +301,14 @@ if ($addressDetailsPage.length) {
   addressChannel.onError(() => store.dispatch({
     type: 'CHANNEL_DISCONNECTED'
   }))
-  addressChannel.on('balance', (msg) => store.dispatch({
-    type: 'RECEIVED_UPDATED_BALANCE',
-    msg: humps.camelizeKeys(msg)
-  }))
+  addressChannel.on('balance', (msg) => {
+    console.log('🔄 Balance update received at:', new Date().toLocaleString())
+    console.log('💰 Balance update data:', msg)
+    store.dispatch({
+      type: 'RECEIVED_UPDATED_BALANCE',
+      msg: humps.camelizeKeys(msg)
+    })
+  })
   addressChannel.on('token_balance', (msg) => loadTokenBalance(
     msg.block_number
   ))
