@@ -56,12 +56,12 @@ services:
       file: ./services/sig-provider.yml
       service: sig-provider
 
-  frontend:
-    depends_on:
-      - backend
-    extends:
-      file: ./services/frontend.yml
-      service: frontend
+  # frontend:
+  #   depends_on:
+  #     - backend
+  #   extends:
+  #     file: ./services/frontend.yml
+  #     service: frontend
     # volumes:
     #   - frontend_node_modules:/app/node_modules
 
@@ -102,7 +102,7 @@ services:
   proxy:
     depends_on:
       - backend
-      - frontend
+      # - frontend
       - stats
     extends:
       file: ./services/nginx.yml
