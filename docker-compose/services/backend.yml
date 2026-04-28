@@ -17,3 +17,9 @@ services:
     volumes:
       - ./logs/:/app/logs/
       - ./dets/:/app/dets/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/api/health/liveness"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
